@@ -6,30 +6,26 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/23 12:08:06 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:37:06 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 
-// ./pipex file1 cmd1 cmd2 file2
-
-// Each command needs a stdin (input) and returns an output (to stdout).
 
 /*
-    infile                                             outfile
-as stdin for cmd1                                 as stdout for cmd2            
-       |                        PIPE                        ↑
-       |           |---------------------------|            |
-       ↓           |                           |            |
-      cmd1   -->  end[1]       ↔             end[0]   -->  cmd2           
-                   |                           |
-      cmd1         |---------------------------|           end[0]
-      output                                               reads end[1]
-      is written                                           and sends cmd1
-      to end[1]                                            output to cmd2
-      (end[1] becomes                                      (end[0] becomes 
-      cmd1 stdout)                                         cmd2 stdin)
+As said before, inside the pipe, everything goes to one of its ends, one end will write and the other will read.
+end[1] is the child process, and end[0] the parent process: the child writes, while the parent reads. 
+And since for something to be read, it must be written first, so cmd1 will be executed by the child, 
+and cmd2 by the parent.
+
+For the child process, we want infile to be our stdin (we want it as input), and end[1] to be our
+stdout (we want to write to end[1] the output of cmd1).
+In the parent process, we want end[0] to be our stdin (end[0] reads from end[1] the output of cmd1), 
+and outfile to be our stdout (we want to write to it the output of cmd2).
+
+dup2() swaps our files with stdin and stdout. dup2() can swap our fds to stdin/stdout.
+It will close fd2 and duplicate the value of fd2 to fd1 (it will redirect fd1 to fd2).
 
 */
 
@@ -42,6 +38,21 @@ void cmd1_process(int pipefd[2], int input_fd, char *cmd, char **envp)
     close(input_fd); // close file descriptor for file1 (close input_fd)
     execute_command(cmd, envp); // execute the command (cmd)
 }
+
+/*
+child_process(f1, cmd1)
+
+dup2 close stdin, f1 becomes the new stdin
+dup2(f1, STDIN_FILENO); // we want f1 to be execve() input
+dup2(end[1], STDOUT_FILENO); // we want end[1] to be execve() stdout
+close(end[0]) --> always close the end of the pipe we don't use,
+                    as long as the pipe is open, the other end will 
+                    be waiting for some kind of input and will not
+                    be able to finish its process
+close(f1)
+// execve function for each possible path
+exit(1); // exit the child process if execve fails
+*/
 
 /*
 e.g: shell infile < grep hello |  wc -l > outfile
@@ -71,6 +82,17 @@ void cmd2_process(int pipefd[2], int output_fd, char *cmd, char **envp)
     close(output_fd); // close file descriptor for file2 (close output_fd)
     execute_command(cmd, envp); // execute the command (cmd)
 }
+
+/*
+parent_process(f2, cmd2);
+
+dup2(f2, ...); // f2 is the stdout
+dup2(end[0], ...); // end[0] is the stdin
+close(end[1])
+close(f2);
+// execve function for each possible path
+exit(1); // exit the parent process if execve fails
+*/
 
 /*
 
@@ -122,6 +144,18 @@ void pipe_process(int pipe_fd[2], int fd1, int fd2, char **av, char **envp)
     waitpid(pid1, NULL, 0); // wait for cmd1 to finish
     waitpid(pid2, NULL, 0); // wait for cmd2 to finish
 }
+
+/*
+The fork() will split our process in two sub-processes: it returns 0 for the child 
+process, a non-zero number for the parent process, or a -1 in case of error.
+Also... fork() splits the process in two parallel, simultaneous processes, that happen at 
+the same time.
+
+The fork() runs two processes (i.e. two commands) in one single program; 
+
+With waitpid() at the very beginning to wait for the child to finish her process.
+With the right stdin and stdout, we can execute the command with execve() 
+*/
 
 /*
 cmd1 ("grep hello"):
