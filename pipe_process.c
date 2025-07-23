@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/23 12:01:15 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:08:06 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,39 @@ void cmd2_process(int pipefd[2], int output_fd, char *cmd, char **envp)
     - reads from the pipe (pipefd[0]) what grep hello wrote to the pipe
     - writes the output to file2 (output_fd).
 */
+
+void pipe_process(int pipe_fd[2], int fd1, int fd2, char **av, char **envp)
+{
+    pid_t pid1;
+    pid_t pid2;
+
+    pid1 = fork(); // create a child process for cmd1
+    if (pid1 == -1)
+    {
+        error . . .
+        exit(1);
+    }
+    if (pid1 == 0)
+    {
+        cmd1_process(pipe_fd, fd1, av[2], envp); // child process for cmd1
+        exit(1);
+    }
+    pid2 = fork(); // create a child process for cmd2
+    if (pid2 == -1)
+    {
+        error . . .
+        exit(1);
+    }
+    if (pid2 == 0)
+    {
+        cmd2_process(pipe_fd, fd2, av[3], envp); // child process for cmd2
+        exit(1);
+    }
+    close (pipe_fd[0]); // close read end of pipe in parent process
+    close (pipe_fd[1]); // close write end of pipe in parent process
+    waitpid(pid1, NULL, 0); // wait for cmd1 to finish
+    waitpid(pid2, NULL, 0); // wait for cmd2 to finish
+}
 
 /*
 cmd1 ("grep hello"):
