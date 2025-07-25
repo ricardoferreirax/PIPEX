@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 16:11:00 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 16:48:29 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,68 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void	free_tab(char **tab)
+void	ft_free_str(char **str)
 {
 	int	i;
 
 	i = 0;
-	if (!tab)
+	if (str && *str == NULL)
 		return ;
-	while (tab[i])
-		free(tab[i++]);
-	free(tab);
+	while (str[i])
+		free(str[i++]);
+	free(str);
+    str = NULL;
 }
 
-char *find_path(char *cmd, char** envp)
+char *cmd_path(char *cmd, char** envp)
 {
     int i;
-    char *exec_path;
-    char **allpath;
-    char *path_part;
-    char **args;
+    char **paths;
+    char *fullpath;
 
-    i = -1;
-    allpath = ft_split(getenv("PATH", envp), ':'); // split PATH environment variable into directories
-    
+    i = 0;
+	while (envp[i])
+	{
+		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+			return (envp[i] + 5);
+		i++;
+	}
+    if (!envp)
+	    return (NULL);
+    if (access(cmd, X_OK) == 0) // check if the command is executable
+        return (ft_strdup(cmd)); // if so, return it
+    paths = ft_split(envp[i] + 5, ':'); // split PATH into directories
+    i = 0;
+    while (paths[i])
+    {
+        fullpath = ft_strjoin(paths[i], "/");
+        if (!fullpath)
+        {
+            ft_free_str(paths);
+            return (NULL);
+        }
+        fullpath = ft_strjoin(fullpath, cmd); // join directory with command
+        if (!fullpath)
+        {
+            ft_free_str(paths);
+            return (NULL);
+        }
+        if (access(fullpath, X_OK) == 0) // check if the command is executable in this directory
+        {
+            ft_free_str(paths);
+            return (fullpath); // return the full path to the command
+        }
+        free(fullpath); // free the full path if not found
+        return (NULL); // if not found in any directory, return NULL
+        if (fullpath)
+        {
+            ft_free_str(paths); // free the paths array
+            return (fullpath); // return the full path to the command
+        }
+        i++;
+    }
+    ft_free_str(paths);
+    return (NULL);
 }
 
 void execute_command(char *cmd, char **envp)
@@ -48,20 +87,21 @@ void execute_command(char *cmd, char **envp)
     args = ft_split(cmd, ' '); // split the command into arguments
     if (!args || !args[0])
     {
-		ft_printf("Invalid command\n");
+        ft_free_str(args);
+		ft_printf("invalid command\n");
 		exit(1);
 	}
-    path = find_path(); // find the path of the command
+    path = cmd_path(...); // find the path of the command
     if (!path)
 	{
+        ft_free_str(args);
 		ft_putstr_fd("command not found: ", 2);
 		ft_putendl_fd(args[0], 2);
-		free_tab(args);
 		exit(127);
 	}
     exceve(path, args, envp); // execute the command with the environment variables
     perror("execve failed"); // if execve fails, print error message
-    free_tab(args); // free the arguments
+    ft_free_str(args); // free the arguments
     free(path);
     exit(1); // exit if execve fails
 }
@@ -167,7 +207,7 @@ int main(int ac, char **av, char **envp)
     }
     else
     {
-        ft_putstr_fd("Usage: ./pipex file1 cmd1 cmd2 file2\n", 2);
+        ft_putstr_fd("./pipex file1 cmd1 cmd2 file2\n", 2);
         exit(1);
     }
     return (0);
