@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 20:54:59 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:02:05 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,24 @@ char *ft_env_path(char **envp)
     return (NULL);
 }
 
+char *ft_join_and_check(char *path, char *cmd)
+{
+    char * tmp;
+    char *fullpath;
+
+    tmp = ft_strjoin(path, "/");
+    if (!tmp)
+        return (NULL);
+    fullpath = ft_strjoin(tmp, cmd);
+    free(tmp);
+    if (!fullpath)
+        return (NULL);
+    if (access(fullpath, X_OK) == 0) // check if the command is executable
+        return (fullpath); // return the full path to the command
+    free(fullpath);
+    return (NULL);
+}
+
 char *ft_cmd_path(char *cmd, char** envp)
 {
     int i;
@@ -52,34 +70,18 @@ char *ft_cmd_path(char *cmd, char** envp)
     char *env_path;
 
     env_path = ft_env_path(envp);
+    if (!env_path)
+        return (NULL);
     if (access(cmd, X_OK) == 0) // check if the command is executable
-        return (ft_strdup(cmd)); // if so, return it
-    paths = ft_split(envp[i] + 5, ':'); // split PATH into directories
+        return (ft_strdup(cmd));
+    paths = ft_split(env_path, ':'); // split PATH into directories
     i = 0;
     while (paths[i])
     {
-        fullpath = ft_strjoin(paths[i], "/");
-        if (!fullpath)
-        {
-            ft_free_str(paths);
-            return (NULL);
-        }
-        fullpath = ft_strjoin(fullpath, cmd); // join directory with command
-        if (!fullpath)
-        {
-            ft_free_str(paths);
-            return (NULL);
-        }
-        if (access(fullpath, X_OK) == 0) // check if the command is executable in this directory
-        {
-            ft_free_str(paths);
-            return (fullpath); // return the full path to the command
-        }
-        free(fullpath); // free the full path if not found
-        return (NULL); // if not found in any directory, return NULL
+        fullpath = ft_join_and_check(paths[i], cmd);
         if (fullpath)
         {
-            ft_free_str(paths); // free the paths array
+            ft_free_str(paths);
             return (fullpath); // return the full path to the command
         }
         i++;
