@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 16:48:29 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:54:59 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,30 @@ void	ft_free_str(char **str)
     str = NULL;
 }
 
-char *cmd_path(char *cmd, char** envp)
+char *ft_env_path(char **envp)
+{
+    int i;
+
+    i = 0;
+    if (!envp)
+        return (NULL);
+    while (envp[i])
+    {
+        if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+            return (envp[i]);
+        i++;
+    }
+    return (NULL);
+}
+
+char *ft_cmd_path(char *cmd, char** envp)
 {
     int i;
     char **paths;
     char *fullpath;
+    char *env_path;
 
-    i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-			return (envp[i] + 5);
-		i++;
-	}
-    if (!envp)
-	    return (NULL);
+    env_path = ft_env_path(envp);
     if (access(cmd, X_OK) == 0) // check if the command is executable
         return (ft_strdup(cmd)); // if so, return it
     paths = ft_split(envp[i] + 5, ':'); // split PATH into directories
