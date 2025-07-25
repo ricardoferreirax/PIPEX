@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 21:02:05 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:49:40 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,10 @@ void execute_command(char *cmd, char **envp)
     if (!args || !args[0])
     {
         ft_free_str(args);
-		ft_printf("invalid command\n");
+		ft_putstr_fd("invalid command: ", 2);
 		exit(1);
 	}
-    path = cmd_path(...); // find the path of the command
+    path = ft_cmd_path(args[0], envp); // get the full path of the command
     if (!path)
 	{
         ft_free_str(args);
@@ -153,38 +153,57 @@ void cmd2_process(char **av, int pipefd[2], char **envp)
     execute_command(av[3], envp); // execute the command (cmd)
 }
 
-/* void	pipe_process(int p_fd[2], int fd1, int fd2, char **av, char **envp)
+void ft_wait_cmd(pid_t pid1, pid_t pid2)
 {
-	pid_t	pid1;
-	pid_t	pid2;
+    int status_child1;
+    int status_child2;
+    int exit;
 
-	pid1 = fork();
-	if (pid1 == -1)
-	{
-		perror("fork 1 fail");
-		exit(1);
-	}
-	if (pid1 == 0)
-	{
-		cmd1_process(p_fd, fd1, av[2], envp);
-		exit(1);
-	}
-	pid2 = fork();
-	if (pid2 == -1)
-	{
-		perror("fork 2 fail");
-		exit(1);
-	}
-	if (pid2 == 0)
-	{
-		cmd2_process(p_fd, fd2, av[3], envp);
-		exit(1);
-	}
-	close(p_fd[0]);
-	close(p_fd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
-} */
+    waitpid(pid1, &status_child1, 0); // wait for first child process (cmd1)
+    waitpid(pid2, &status_child2, 0); // wait for second child process (cmd2)
+    if (WIFEXITED(status_child1) && WIFEXITED(status_child1) != 0)
+        exit= WEXITSTATUS(status_child1);
+    if (WIFEXITED(status_child2) && WIFEXITED(status_child2) != 0)
+        exit = WEXITSTATUS(status_child2);
+    exit(exit); // exit with the status of the last child process
+}
+
+void pipe_process(char **av, int pipefd[2], char **envp)
+{
+    int infile;
+    int outfile;
+    pid_t pid1;
+    pid_t pid2;
+    
+    if (pipe(pipefd) == -1)
+    {
+        perror("pipe failed");
+        exit(1);
+    }
+    pid1 = fork();
+    if (pid1 < 0)
+    {
+        perror("fork failed");
+        exit(1);
+    }
+    if (pid1 == 0)
+       cmd1_process(av, pipefd, envp);
+    pid2 = fork();
+    if (pid2 < 0)
+    {
+        perror("fork failed");
+        exit(1);
+    }
+    if (pid2 == 0)
+        cmd2_process(av, pipefd, envp);
+    close(pipefd[0]); // close read end of pipe (pipefd[0])
+    close(pipefd[1]); // close write end of pipe (pipefd[1])
+    if (infile >= 0)
+        close(infile);
+    if (outfile >= 0)
+        close(outfile);
+    ft_wait_cmd(pid1, pid2);
+}
 
 #include <sys/types.h>
 
@@ -199,26 +218,10 @@ int main(int ac, char **av, char **envp)
         exit(1);
     }
     if (ac == 5)
-    {
-       if (pipe(pipefd) == -1)
-        {
-            perror("failed to create pipe");
-            exit (1);
-        }
-        pid = fork();
-        if (pid == -1)
-        {
-            perror("fork failed");
-            exit (1);
-        }
-        else if (pid == 0)
-            cmd1_process(av, pipefd, envp);
-        else
-            cmd2_process(av, pipefd, envp);
-    }
+       pipe_process(av, pipefd, envp);
     else
     {
-        ft_putstr_fd("./pipex file1 cmd1 cmd2 file2\n", 2);
+        ft_putstr_fd("usage: ./pipex file1 cmd1 cmd2 file2\n", 2);
         exit(1);
     }
     return (0);
