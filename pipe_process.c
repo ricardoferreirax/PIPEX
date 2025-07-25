@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 21:49:40 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:04:49 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,12 @@ void	ft_free_str(char **str)
 {
 	int	i;
 
-	i = 0;
-	if (str && *str == NULL)
+	if (!str)
 		return ;
+	i = 0;
 	while (str[i])
 		free(str[i++]);
 	free(str);
-    str = NULL;
 }
 
 char *ft_env_path(char **envp)
@@ -33,12 +32,10 @@ char *ft_env_path(char **envp)
     int i;
 
     i = 0;
-    if (!envp)
-        return (NULL);
-    while (envp[i])
+    while (envp && envp[i])
     {
         if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-            return (envp[i]);
+            return (envp[i] + 5);
         i++;
     }
     return (NULL);
@@ -75,22 +72,21 @@ char *ft_cmd_path(char *cmd, char** envp)
     if (access(cmd, X_OK) == 0) // check if the command is executable
         return (ft_strdup(cmd));
     paths = ft_split(env_path, ':'); // split PATH into directories
+    if (!paths)
+        return (NULL);
     i = 0;
     while (paths[i])
     {
         fullpath = ft_join_and_check(paths[i], cmd);
         if (fullpath)
-        {
-            ft_free_str(paths);
-            return (fullpath); // return the full path to the command
-        }
+            return (ft_free_str(paths), fullpath);
         i++;
     }
     ft_free_str(paths);
     return (NULL);
 }
 
-void execute_command(char *cmd, char **envp)
+void ft_execute_command(char *cmd, char **envp)
 {
     char **args;
     char *path;
@@ -105,16 +101,16 @@ void execute_command(char *cmd, char **envp)
     path = ft_cmd_path(args[0], envp); // get the full path of the command
     if (!path)
 	{
-        ft_free_str(args);
-		ft_putstr_fd("command not found: ", 2);
+        ft_putstr_fd("command not found: ", 2);
 		ft_putendl_fd(args[0], 2);
+		ft_free_str(args);
 		exit(127);
 	}
-    exceve(path, args, envp); // execute the command with the environment variables
-    perror("execve failed"); // if execve fails, print error message
-    ft_free_str(args); // free the arguments
+    execve(path, args, envp);
+    perror("execve failed");
+    ft_free_str(args);
     free(path);
-    exit(1); // exit if execve fails
+    exit(1);
 }
 
 void cmd1_process(char **av, int pipefd[2], char **envp)
@@ -124,15 +120,15 @@ void cmd1_process(char **av, int pipefd[2], char **envp)
     infile = open(av[1], O_RDONLY, 0444); // open file1 (av[1]) for reading
     if (infile == -1)
     {
-        close (pipefd[1]);
-        ft_putstr_fd("error opening file1", 2);
-        exit(1);
+        perror("error opening input file");
+		close(pipefd[1]);
+		exit(1);
     }
     dup2(infile, STDIN_FILENO); // redirect input from file1 (infile) -> stdin: infile ()
     dup2(pipefd[1], STDOUT_FILENO); // redirect output to pipe (pipefd[1]) -> stdout: pipefd[1] (write on pipe)
     close(pipefd[0]); // close read end of pipe (pipefd[0])
     close(infile); // close file descriptor for file1 (close input_fd)
-    execute_command(av[2], envp); // execute the command (cmd)
+    ft_execute_command(av[2], envp); // execute the command (cmd)
 }
 
 void cmd2_process(char **av, int pipefd[2], char **envp)
@@ -142,36 +138,35 @@ void cmd2_process(char **av, int pipefd[2], char **envp)
     outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644); // open file2 (av[4]) for writing
     if (outfile == -1)
     {
-        close(pipefd[0]);
-        ft_putstr_fd("error opening file2", 2);
-        exit(1);
+        perror("error opening output file");
+		close(pipefd[0]);
+		exit(1);
     }
     dup2(pipefd[0], STDIN_FILENO); // redirect input from pipe (pipefd[0]) -> stdin: pipefd[0] (read from pipe)
     dup2(outfile, STDOUT_FILENO); // redirect output to file2 (outfile) -> stdout: outfile (write on file2)
     close(pipefd[1]); // close write end of pipe (pipefd[1])
     close(outfile); // close file descriptor for file2 (close output_fd)
-    execute_command(av[3], envp); // execute the command (cmd)
+    ft_execute_command(av[3], envp); // execute the command (cmd)
 }
 
 void ft_wait_cmd(pid_t pid1, pid_t pid2)
 {
-    int status_child1;
-    int status_child2;
-    int exit;
+    int	status1;
+	int	status2;
+	int	exit_status;
 
-    waitpid(pid1, &status_child1, 0); // wait for first child process (cmd1)
-    waitpid(pid2, &status_child2, 0); // wait for second child process (cmd2)
-    if (WIFEXITED(status_child1) && WIFEXITED(status_child1) != 0)
-        exit= WEXITSTATUS(status_child1);
-    if (WIFEXITED(status_child2) && WIFEXITED(status_child2) != 0)
-        exit = WEXITSTATUS(status_child2);
-    exit(exit); // exit with the status of the last child process
+    exit_status = 0;
+	waitpid(pid1, &status1, 0);
+	waitpid(pid2, &status2, 0);
+	if (WIFEXITED(status1))
+		exit_status = WEXITSTATUS(status1);
+	if (WIFEXITED(status2))
+		exit_status = WEXITSTATUS(status2);
+	exit(exit_status);
 }
 
 void pipe_process(char **av, int pipefd[2], char **envp)
 {
-    int infile;
-    int outfile;
     pid_t pid1;
     pid_t pid2;
     
@@ -198,31 +193,21 @@ void pipe_process(char **av, int pipefd[2], char **envp)
         cmd2_process(av, pipefd, envp);
     close(pipefd[0]); // close read end of pipe (pipefd[0])
     close(pipefd[1]); // close write end of pipe (pipefd[1])
-    if (infile >= 0)
-        close(infile);
-    if (outfile >= 0)
-        close(outfile);
     ft_wait_cmd(pid1, pid2);
 }
 
 #include <sys/types.h>
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-    int pipefd[2];
-    pid_t pid;
+	int	pipefd[2];
 
-    if (!envp)
-    {
-        ft_putstr_fd("no environment variablesfound\n", 2);
-        exit(1);
-    }
-    if (ac == 5)
-       pipe_process(av, pipefd, envp);
-    else
-    {
-        ft_putstr_fd("usage: ./pipex file1 cmd1 cmd2 file2\n", 2);
-        exit(1);
-    }
-    return (0);
+	if (ac == 5)
+		pipe_process(av, pipefd, envp);
+	else
+	{
+		ft_putstr_fd("usage: ./pipex file1 cmd1 cmd2 file2\n", 2);
+		exit(1);
+	}
+	return (0);
 }
