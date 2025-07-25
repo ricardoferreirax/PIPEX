@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 15:36:29 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:44:23 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,32 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+
+void execute_command(char *cmd, char **envp)
+{
+    char **args;
+    char *path;
+
+    args = ft_split(cmd, ' '); // split the command into arguments
+    if (!args || !args[0])
+    {
+		ft_printf("Invalid command\n");
+		exit(1);
+	}
+    path = find_path(); // find the path of the command
+    if (!path)
+	{
+		ft_putstr_fd("command not found: ", 2);
+		ft_putendl_fd(args[0], 2);
+		free_split(args);
+		exit(127);
+	}
+    exceve(path, args, envp); // execute the command with the environment variables
+    perror("execve failed"); // if execve fails, print error message
+    free_split(args); // free the arguments
+    free(path);
+    exit(1); // exit if execve fails
+}
 
 void cmd1_process(char **av, int pipefd[2], char **envp)
 {
