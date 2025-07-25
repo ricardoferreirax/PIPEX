@@ -6,11 +6,9 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 15:11:20 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:12:41 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <fcntl.h>
 
 void cmd1_process(int pipefd[2], int input_fd, char *cmd, char **envp)
 {
