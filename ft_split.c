@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:14:18 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:12:34 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:57:29 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,6 @@ static int	count_words(const char *s, char sep)
 		idx++;
 	}
 	return (count);
-}
-
-static size_t	ft_strlcpy(char *dest, const char *src, size_t size)
-{
-	size_t	idx;
-
-	if (size == 0)
-		return (ft_strlen(src));
-	idx = 0;
-	while (src[idx] != '\0' && (idx < size - 1))
-	{
-		dest[idx] = src[idx];
-		idx++;
-	}
-	dest[idx] = '\0';
-	return (ft_strlen(src));
 }
 
 static char	*malloc_words(const char **s, char sep)

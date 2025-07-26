@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft_utils.c                                      :+:      :+:    :+:   */
+/*   pipex_utils_1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:01:37 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:09:15 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:57:54 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,25 +86,18 @@ char	*ft_strdup(const char *s)
 	return (dest);
 }
 
-void	ft_putstr_fd(char *s, int fd)
+size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 {
-	int	idx;
+	size_t	idx;
 
-	if (!s || fd < 0)
-		return ;
+	if (size == 0)
+		return (ft_strlen(src));
 	idx = 0;
-	while (s[idx] != '\0')
-		write(fd, &s[idx++], 1);
-}
-
-void	ft_putendl_fd(char *s, int fd)
-{
-	int	idx;
-
-	idx = 0;
-	if (!s || fd < 0)
-		return ;
-	while (s[idx] != '\0')
-		write(fd, &s[idx++], 1);
-	write(fd, "\n", 1);
+	while (src[idx] != '\0' && (idx < size - 1))
+	{
+		dest[idx] = src[idx];
+		idx++;
+	}
+	dest[idx] = '\0';
+	return (ft_strlen(src));
 }
