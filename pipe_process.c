@@ -6,14 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/25 22:04:49 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/26 13:58:49 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
+#include "pipex.h"
 
 void	ft_free_str(char **str)
 {
@@ -117,7 +114,7 @@ void cmd1_process(char **av, int pipefd[2], char **envp)
 {
     int infile;
 
-    infile = open(av[1], O_RDONLY, 0444); // open file1 (av[1]) for reading
+    infile = open(av[1], O_RDONLY); // open file1 (av[1]) for reading
     if (infile == -1)
     {
         perror("error opening input file");

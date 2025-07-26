@@ -1,0 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
+/*   Updated: 2025/07/26 13:58:37 by rmedeiro         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PIPEX_H
+# define PIPEX_H
+
+# include <unistd.h>
+# include <string.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/wait.h>
+#include <fcntl.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+
+void	ft_free_str(char **str);
+char	*ft_env_path(char **envp);
+char	*ft_join_and_check(char *path, char *cmd);
+char	*ft_cmd_path(char *cmd, char **envp);
+void	ft_execute_command(char *cmd, char **envp);
+void	cmd1_process(char **av, int pipefd[2], char **envp);
+void	cmd2_process(char **av, int pipefd[2], char **envp);
+void	ft_wait_cmd(pid_t pid1, pid_t pid2);
+void	pipe_process(char **av, int pipefd[2], char **envp);
+
+#endif
