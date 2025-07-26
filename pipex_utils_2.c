@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:57:18 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:09:12 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,10 @@ void	ft_free_str(char **str)
 	while (str[i])
 		free(str[i++]);
 	free(str);
+}
+
+void error_exit(const char *message)
+{
+    perror(message);
+    exit(EXIT_FAILURE);
 }

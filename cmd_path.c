@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:55:05 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:12:28 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ static char *ft_join_and_check(char *path, char *cmd)
     free(tmp);
     if (!fullpath)
         return (NULL);
-    if (access(fullpath, X_OK) == 0) // check if the command is executable
-        return (fullpath); // return the full path to the command
+    if (access(fullpath, X_OK) == 0)
+        return (fullpath);
     free(fullpath);
     return (NULL);
 }
@@ -54,9 +54,9 @@ char *ft_cmd_path(char *cmd, char** envp)
     env_path = ft_env_path(envp);
     if (!env_path)
         return (NULL);
-    if (access(cmd, X_OK) == 0) // check if the command is executable
+    if (access(cmd, X_OK) == 0)
         return (ft_strdup(cmd));
-    paths = ft_split(env_path, ':'); // split PATH into directories
+    paths = ft_split(env_path, ':');
     if (!paths)
         return (NULL);
     i = 0;
