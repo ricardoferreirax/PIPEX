@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:01:37 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:06:03 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:09:15 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,25 +51,21 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (joined);
 }
 
-char	*ft_strnstr(const char *big, const char *little, size_t len)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	size_t	idx;
-	size_t	start;
+	size_t			idx;
+	unsigned char	*tmp_s1;
+	unsigned char	*tmp_s2;
 
-	if (*little == '\0')
-		return ((char *)big);
-	start = 0;
-	while (start < len && big[start] != '\0')
-	{
-		idx = 0;
-		while (little[idx] && big[start + idx] == little[idx]
-			&& (start + idx) < len)
-			idx++;
-		if (little[idx] == '\0')
-			return ((char *)&big[start]);
-		start++;
-	}
-	return (NULL);
+	if (n == 0)
+		return (0);
+	tmp_s1 = (unsigned char *)s1;
+	tmp_s2 = (unsigned char *)s2;
+	idx = 0;
+	while (tmp_s1[idx] && tmp_s2[idx] && tmp_s1[idx] == tmp_s2[idx]
+		&& idx < n - 1)
+		idx++;
+	return (tmp_s1[idx] - tmp_s2[idx]);
 }
 
 char	*ft_strdup(const char *s)
