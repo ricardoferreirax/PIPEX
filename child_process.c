@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 11:48:01 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:54:04 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,23 @@ void handle_child(char **av, int pipefd[2], char **envp)
     infile = open(av[1], O_RDONLY); // open file1 (av[1]) for reading
     if (infile == -1)
     {
-        perror("error opening input file");
 		close(pipefd[1]);
-		exit(1);
+		error_exit("error opening input file");
     }
     if (dup2(infile, STDIN_FILENO) == -1) // redirect input from file1 (infile) -> stdin: infile | verify if dup2 was successful
     {
-        perror("dup2 failed (infile -> STDIN)");
         close(infile);
         close(pipefd[1]);
-        exit(1);
+        error_exit("dup2 failed (infile -> STDIN)");
     }
     if (dup2(pipefd[1], STDOUT_FILENO) == -1) // redirect output to pipe (pipefd[1]) -> stdout: pipefd[1] (write on pipe) | verify if dup2 was successful
     {
-        perror("dup2 failed (pipefd[1] -> STDOUT)");
         close(infile);
         close(pipefd[1]);
-        exit(1);
+        error_exit("dup2 failed (pipefd[1] -> STDOUT)");
     }
     close(pipefd[0]); // close read end of pipe (pipefd[0])
+    close(pipefd[1]); // close write end of pipe (pipefd[1])
     close(infile); // close file descriptor for file1 (close infile)
     ft_execute_command(av[2], envp); // execute the command (cmd)
 }
@@ -49,23 +47,20 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644); // open file2 (av[4]) for writing
     if (outfile == -1)
     {
-        perror("error opening output file");
-		close(pipefd[0]);
-		exit(1);
+        close(pipefd[0]);
+		error_exit("error opening output file");
     }
     if (dup2(pipefd[0], STDIN_FILENO) == -1) // redirect input from pipe (pipefd[0]) -> stdin: pipefd[0] (read from pipe) | verify if dup2 was successful
     {
-        perror("dup2 failed (pipefd[0] -> STDIN)");
         close(outfile);
         close(pipefd[0]);
-        exit(1);
+        error_exit("dup2 failed (pipefd[0] -> STDIN)");
     }
     if (dup2(outfile, STDOUT_FILENO) == -1) // redirect output to file2 (outfile) -> stdout: outfile (write on file2) | verify if dup2 was successful
     {
-        perror("dup2 failed (outfile -> STDOUT)");
         close(outfile);
         close(pipefd[0]);
-        exit(1);
+        error_exit("dup2 failed (outfile -> STDOUT)");
     }
     close(pipefd[1]); // close write end of pipe (pipefd[1])
     close(pipefd[0]); // close read end of pipe (pipefd[0])

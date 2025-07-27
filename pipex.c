@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 15:13:14 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:56:21 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ static void pipe_process(char **av, int pipefd[2], char **envp)
     if (pid1 < 0)
         error_exit("fork failed");
     if (pid1 == 0)
-       handle_child1(av, pipefd, envp);
+       handle_child(av, pipefd, envp);
     pid2 = fork();
     if (pid2 < 0)
         error_exit("fork failed");
     if (pid2 == 0)
-        handle_child2(av, pipefd, envp);
+        handle_parent(av, pipefd, envp);
     close(pipefd[0]);
     close(pipefd[1]);
     wait_for_children(pid1, pid2);
