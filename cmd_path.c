@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 15:12:28 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:37:50 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static char *ft_env_path(char **envp)
     return (NULL);
 }
 
-static char *ft_join_and_check(char *path, char *cmd)
+static char *ft_join_path(char *path, char *cmd)
 {
     char * tmp;
     char *fullpath;
@@ -35,38 +35,43 @@ static char *ft_join_and_check(char *path, char *cmd)
     if (!tmp)
         return (NULL);
     fullpath = ft_strjoin(tmp, cmd);
-    free(tmp);
     if (!fullpath)
         return (NULL);
-    if (access(fullpath, X_OK) == 0)
-        return (fullpath);
-    free(fullpath);
-    return (NULL);
+    free(tmp);
+    return (fullpath);
 }
 
 char *ft_cmd_path(char *cmd, char** envp)
 {
     int i;
-    char **paths;
-    char *fullpath;
+    char **list_path;
+    char *path;
     char *env_path;
 
-    env_path = ft_env_path(envp);
-    if (!env_path)
+    if (!cmd || !envp)
         return (NULL);
     if (access(cmd, X_OK) == 0)
         return (ft_strdup(cmd));
-    paths = ft_split(env_path, ':');
-    if (!paths)
+    env_path = ft_env_path(envp);
+    if (!env_path)
+        return (NULL);
+    list_path = ft_split(env_path, ':');
+    if (!list_path)
         return (NULL);
     i = 0;
-    while (paths[i])
+    while (list_path[i])
     {
-        fullpath = ft_join_and_check(paths[i], cmd);
-        if (fullpath)
-            return (ft_free_str(paths), fullpath);
+        path = ft_join_and_check(list_path[i], cmd);
+        if (access(path, X_OK) == 0)
+        {
+            ft_free_str(list_path);
+            return (path);
+        }
+        free(path);
         i++;
     }
-    ft_free_str(paths);
+    ft_free_str(list_path);
+    free(env_path);
+    free(cmd);
     return (NULL);
 }
