@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 12:37:50 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 16:46:28 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,18 @@ static char *ft_env_path(char **envp)
 
 static char *ft_join_path(char *path, char *cmd)
 {
-    char * tmp;
+    char *tmp;
     char *fullpath;
 
+    if (!path || !cmd)
+        return (NULL);
     tmp = ft_strjoin(path, "/");
     if (!tmp)
         return (NULL);
     fullpath = ft_strjoin(tmp, cmd);
+    free(tmp);
     if (!fullpath)
         return (NULL);
-    free(tmp);
     return (fullpath);
 }
 
@@ -61,17 +63,11 @@ char *ft_cmd_path(char *cmd, char** envp)
     i = 0;
     while (list_path[i])
     {
-        path = ft_join_and_check(list_path[i], cmd);
-        if (access(path, X_OK) == 0)
-        {
-            ft_free_str(list_path);
-            return (path);
-        }
+        path = ft_join_path(list_path[i], cmd);
+        if (path && access(path, X_OK) == 0)
+            return (ft_free_str(list_path), path);
         free(path);
         i++;
     }
-    ft_free_str(list_path);
-    free(env_path);
-    free(cmd);
-    return (NULL);
+    return (ft_free_str(list_path), NULL);
 }
