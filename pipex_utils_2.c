@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 15:36:01 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 17:05:45 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,11 @@ void error_exit(const char *message)
 {
     perror(message);
     exit(1);
+}
+
+void cmd_notfound(const char *cmd)
+{
+    ft_putstr_fd("command not found: ", 2);
+    ft_putendl_fd(cmd, 2);
+    exit(127);
 }

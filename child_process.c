@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 11:54:04 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 16:52:42 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void handle_child(char **av, int pipefd[2], char **envp)
     close(pipefd[0]); // close read end of pipe (pipefd[0])
     close(pipefd[1]); // close write end of pipe (pipefd[1])
     close(infile); // close file descriptor for file1 (close infile)
-    ft_execute_command(av[2], envp); // execute the command (cmd)
+    ft_exec_cmd(av[2], envp); // execute the command (cmd)
 }
 
 void handle_parent(char **av, int pipefd[2], char **envp)
@@ -65,7 +65,7 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     close(pipefd[1]); // close write end of pipe (pipefd[1])
     close(pipefd[0]); // close read end of pipe (pipefd[0])
     close(outfile); // close file descriptor for file2 (close output_fd)
-    ft_execute_command(av[3], envp); // execute the command (cmd)
+    ft_exec_cmd(av[3], envp); // execute the command (cmd)
 }
 
 void wait_for_children(pid_t pid1, pid_t pid2)

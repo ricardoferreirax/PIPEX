@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 15:24:37 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 17:16:32 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,38 +16,34 @@ static void handle_cmd_with_path(char *cmd, char **args)
 {
     if (access(args[0], X_OK) != 0)
     {
-        ft_putstr_fd("command not found: ", 2);
-        ft_putendl_fd(args[0], 2);
         ft_free_str(args);
-        exit(127);
+        cmd_notfound(args[0]);
     }
 }
 
-void ft_execute_command(char *cmd, char **envp)
+void ft_exec_cmd(char *cmd, char **envp)
 {
-    char **args;
+    char **list_cmd;
     char *path;
 
-    args = ft_split(cmd, ' ');
-    if (!args || !args[0])
+    if (!ft_strncmp(cmd, "", 1))
+        cmd_notfound(cmd);
+    list_cmd = ft_split(cmd, ' ');
+    if (!list_cmd || !list_cmd[0])
     {
-        ft_free_str(args);
-		ft_putstr_fd("invalid command: ", 2);
-		exit(127);
+        ft_free_str(list_cmd);
+        cmd_notfound(cmd);
 	}
-    path = ft_cmd_path(args[0], envp);
-    if (ft_strchr(args[0], '/'))
-		handle_cmd_with_path(args[0], envp);
+    path = ft_cmd_path(list_cmd[0], envp);
+    if (ft_strchr(list_cmd[0], '/'))
+		handle_cmd_with_path(list_cmd[0], envp);
     if (!path)
 	{
-        ft_putstr_fd("command not found: ", 2);
-		ft_putendl_fd(args[0], 2);
-		ft_free_str(args);
-		exit(127);
+		ft_free_str(list_cmd);
+		cmd_notfound(list_cmd[0]);
 	}
-    execve(path, args, envp);
-    perror("execve failed");
-    ft_free_str(args);
+    execve(path, list_cmd, envp);
+    ft_free_str(list_cmd);
     free(path);
-    exit(1);
+    error_exit("execve failed");
 }
