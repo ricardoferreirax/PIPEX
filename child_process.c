@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   child_processes.c                                  :+:      :+:    :+:   */
+/*   child_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:53:50 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:40:53 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void handle_child1(char **av, int pipefd[2], char **envp)
+void handle_child(char **av, int pipefd[2], char **envp)
 {
     int infile;
 
@@ -23,10 +23,22 @@ void handle_child1(char **av, int pipefd[2], char **envp)
 		close(pipefd[1]);
 		exit(1);
     }
-    dup2(infile, STDIN_FILENO); // redirect input from file1 (infile) -> stdin: infile ()
-    dup2(pipefd[1], STDOUT_FILENO); // redirect output to pipe (pipefd[1]) -> stdout: pipefd[1] (write on pipe)
+    if (dup2(infile, STDIN_FILENO) == -1) // redirect input from file1 (infile) -> stdin: infile | verify if dup2 was successful
+    {
+        perror("dup2 failed (infile -> STDIN)");
+        close(infile);
+        close(pipefd[1]);
+        exit(1);
+    }
+    if (dup2(pipefd[1], STDOUT_FILENO) == -1) // redirect output to pipe (pipefd[1]) -> stdout: pipefd[1] (write on pipe) | verify if dup2 was successful
+    {
+        perror("dup2 failed (pipefd[1] -> STDOUT)");
+        close(infile);
+        close(pipefd[1]);
+        exit(1);
+    }
     close(pipefd[0]); // close read end of pipe (pipefd[0])
-    close(infile); // close file descriptor for file1 (close input_fd)
+    close(infile); // close file descriptor for file1 (close infile)
     ft_execute_command(av[2], envp); // execute the command (cmd)
 }
 
