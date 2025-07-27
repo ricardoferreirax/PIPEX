@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 11:40:53 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:48:01 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void handle_child(char **av, int pipefd[2], char **envp)
     ft_execute_command(av[2], envp); // execute the command (cmd)
 }
 
-void handle_child2(char **av, int pipefd[2], char **envp)
+void handle_parent(char **av, int pipefd[2], char **envp)
 {
     int outfile;
 
@@ -53,9 +53,22 @@ void handle_child2(char **av, int pipefd[2], char **envp)
 		close(pipefd[0]);
 		exit(1);
     }
-    dup2(pipefd[0], STDIN_FILENO); // redirect input from pipe (pipefd[0]) -> stdin: pipefd[0] (read from pipe)
-    dup2(outfile, STDOUT_FILENO); // redirect output to file2 (outfile) -> stdout: outfile (write on file2)
+    if (dup2(pipefd[0], STDIN_FILENO) == -1) // redirect input from pipe (pipefd[0]) -> stdin: pipefd[0] (read from pipe) | verify if dup2 was successful
+    {
+        perror("dup2 failed (pipefd[0] -> STDIN)");
+        close(outfile);
+        close(pipefd[0]);
+        exit(1);
+    }
+    if (dup2(outfile, STDOUT_FILENO) == -1) // redirect output to file2 (outfile) -> stdout: outfile (write on file2) | verify if dup2 was successful
+    {
+        perror("dup2 failed (outfile -> STDOUT)");
+        close(outfile);
+        close(pipefd[0]);
+        exit(1);
+    }
     close(pipefd[1]); // close write end of pipe (pipefd[1])
+    close(pipefd[0]); // close read end of pipe (pipefd[0])
     close(outfile); // close file descriptor for file2 (close output_fd)
     ft_execute_command(av[3], envp); // execute the command (cmd)
 }
