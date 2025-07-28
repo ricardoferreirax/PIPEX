@@ -6,13 +6,13 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/28 14:19:52 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/28 14:32:30 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void handle_cmd_with_path(char *cmd, char **args)
+static void check_cmd_access(char *cmd, char **args)
 {
     if (access(args[0], X_OK) != 0)
     {   
@@ -23,28 +23,29 @@ static void handle_cmd_with_path(char *cmd, char **args)
 
 void ft_exec_cmd(char *cmd, char **envp)
 {
-    char **list_cmd;
+    char **cmd_list;
     char *cmd_path;
 
     if (!cmd || cmd[0] == '\0')
         cmd_notfound(cmd);
-    list_cmd = ft_split(cmd, ' ');
-    if (!list_cmd || !list_cmd[0])
+    cmd_list = ft_split(cmd, ' ');
+    if (!cmd_list || !cmd_list[0])
     {
-        ft_free_str(list_cmd);
+        ft_free_str(cmd_list);
         cmd_notfound(cmd);
 	}
-    if (ft_strchr(list_cmd[0], '/'))
-		handle_cmd_with_path(cmd, list_cmd);
-    cmd_path = ft_cmd_path(list_cmd[0], envp);
+    if (ft_strchr(cmd_list[0], '/'))
+		check_cmd_access(cmd, cmd_list);
+    cmd_path = ft_cmd_path(cmd_list[0], envp);
     if (!cmd_path)
 	{
-		ft_free_str(list_cmd);
-		cmd_notfound(list_cmd[0]);
+		ft_free_str(cmd_list);
+		cmd_notfound(cmd_list[0]);
 	}
-    execve(cmd_path, list_cmd, envp);
-    perror("execve failed");
-    ft_free_str(list_cmd);
-    free(cmd_path);
-    exit(1);
+    if (execve(cmd_path, cmd_list, envp) == -1)
+	{
+		ft_free_str(cmd_list);
+		free(cmd_path);
+		error_exit("execve failed");
+	}
 }
