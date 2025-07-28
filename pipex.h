@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 17:35:27 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:55:30 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,6 @@ void	ft_putstr_fd(char *s, int fd);
 char	*ft_strchr(const char *s, int c);
 void    error_exit(const char *message);
 void    cmd_notfound(const char *cmd);
+void    cmd_not_file_dir(char *cmd);
 
 #endif
