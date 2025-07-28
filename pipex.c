@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 11:56:21 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/28 14:49:40 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 static void pipe_process(char **av, int pipefd[2], char **envp)
 {
+    int exit_code;
     pid_t pid1;
     pid_t pid2;
     
@@ -31,7 +32,8 @@ static void pipe_process(char **av, int pipefd[2], char **envp)
         handle_parent(av, pipefd, envp);
     close(pipefd[0]);
     close(pipefd[1]);
-    wait_for_children(pid1, pid2);
+    exit_code = wait_processes(pid2);
+    exit(exit_code);
 }
 
 int	main(int ac, char **av, char **envp)
