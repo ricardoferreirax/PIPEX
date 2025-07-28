@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/28 11:39:43 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/28 14:35:40 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static char *ft_join_path(char *path, char *cmd)
 char *ft_cmd_path(char *cmd, char** envp)
 {
     int i;
-    char **list_path;
+    char **path_list;
     char *path;
     char *env_path;
 
@@ -57,17 +57,17 @@ char *ft_cmd_path(char *cmd, char** envp)
     env_path = ft_env_path(envp);
     if (!env_path)
         return (NULL);
-    list_path = ft_split(env_path, ':');
-    if (!list_path)
+    path_list = ft_split(env_path, ':');
+    if (!path_list)
         return (NULL);
     i = 0;
-    while (list_path[i])
+    while (path_list[i])
     {
-        path = ft_join_path(list_path[i], cmd);
+        path = ft_join_path(path_list[i], cmd);
         if (path && access(path, X_OK) == 0)
-            return (ft_free_str(list_path), path);
+            return (ft_free_str(path_list), path);
         free(path);
         i++;
     }
-    return (ft_free_str(list_path), NULL);
+    return (ft_free_str(path_list), NULL);
 }
