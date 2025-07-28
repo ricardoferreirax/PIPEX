@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/28 11:56:12 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/28 14:19:52 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,8 @@ static void handle_cmd_with_path(char *cmd, char **args)
 {
     if (access(args[0], X_OK) != 0)
     {   
-        cmd_not_file_dir(cmd);
         ft_free_str(args);
-        exit(127);
+        cmd_not_file_dir(cmd);
     }
 }
 
