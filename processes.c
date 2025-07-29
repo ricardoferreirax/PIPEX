@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   child_process.c                                    :+:      :+:    :+:   */
+/*   processes.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/28 14:51:57 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:34:43 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,17 +68,17 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     ft_exec_cmd(av[3], envp); // execute the command (cmd)
 }
 
-int	wait_processes(int last_pid)
+void wait_processes(pid_t pid1, pid_t pid2)
 {
-	int	pid;
-	int	status;
-	int	last_status;
-    
-	last_status = 0;
-	while ((pid = wait(&status)) > 0)
-	{
-		if (pid == last_pid && WIFEXITED(status))
-			last_status = WEXITSTATUS(status);
-	}
-	return (last_status);
+    int	status1;
+	int	status2;
+	int	exit_status;
+    exit_status = 0;
+	waitpid(pid1, &status1, 0);
+	waitpid(pid2, &status2, 0);
+	if (WIFEXITED(status1))
+		exit_status = WEXITSTATUS(status1);
+	if (WIFEXITED(status2))
+		exit_status = WEXITSTATUS(status2);
+	exit(exit_status);
 }
