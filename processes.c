@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/29 12:34:43 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:56:05 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void handle_child(char **av, int pipefd[2], char **envp)
     infile = open(av[1], O_RDONLY); // open file1 (av[1]) for reading
     if (infile == -1)
     {
-		close(pipefd[1]);
+		close(pipefd[0]);
+        close(pipefd[1]);
 		error_exit("error opening input file");
     }
     if (dup2(infile, STDIN_FILENO) == -1) // redirect input from file1 (infile) -> stdin: infile | verify if dup2 was successful
@@ -48,6 +49,7 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     if (outfile == -1)
     {
         close(pipefd[0]);
+        close(pipefd[1]);
 		error_exit("error opening output file");
     }
     if (dup2(pipefd[0], STDIN_FILENO) == -1) // redirect input from pipe (pipefd[0]) -> stdin: pipefd[0] (read from pipe) | verify if dup2 was successful
