@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/28 15:14:12 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:38:22 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,15 @@
 
 static void check_cmd_access(char *cmd, char **args)
 {
-    if (access(args[0], X_OK) != 0)
-    {   
+    if (access(args[0], F_OK) != 0)
+    {
         ft_free_str(args);
         cmd_not_file_dir(cmd);
+    }
+    else if (access(args[0], X_OK) != 0)
+    {
+        ft_free_str(args);
+        error_exit("Permission denied");
     }
 }
 
@@ -39,8 +44,8 @@ void ft_exec_cmd(char *cmd, char **envp)
     cmd_path = ft_cmd_path(cmd_list[0], envp);
     if (!cmd_path)
 	{
+        ft_free_str(cmd_list);
         cmd_notfound(cmd_list[0]);
-		ft_free_str(cmd_list);
 	}
     if (execve(cmd_path, cmd_list, envp) == -1)
 	{
