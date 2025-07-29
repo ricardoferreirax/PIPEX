@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/29 16:05:53 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:12:07 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,27 @@ char	*ft_strchr(const char *s, int c)
 	if ((char)c == '\0')
 		return ((char *)(s + idx));
 	return (NULL);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char		*substring;
+	size_t		idx;
+
+	if (!s)
+		return (NULL);
+	if (start >= ft_strlen(s))
+		return (ft_strdup(""));
+	if (len > ft_strlen(s) - start)
+		len = ft_strlen(s) - start;
+	substring = malloc((len + 1) * sizeof(char));
+	if (!substring)
+		return (NULL);
+	idx = 0;
+	while (idx < len)
+		substring[idx++] = s[start++];
+	substring[idx] = '\0';
+	return (substring);
 }
 
 void	ft_free_str(char **str)

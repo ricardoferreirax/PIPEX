@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/29 12:30:49 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:12:32 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
-#include <fcntl.h>
+# include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 
@@ -31,6 +31,7 @@ void    wait_processes(pid_t pid1, pid_t pid2);
 char	*ft_strjoin(char const *s1, char const *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strdup(const char *s);
 void	ft_putstr_fd(char *s, int fd);
 size_t	ft_strlen(const char *s);
