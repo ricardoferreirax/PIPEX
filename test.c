@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:25:22 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/29 12:32:37 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 12:46:27 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,10 +108,15 @@ char *ft_cmd_path(char *cmd, char** envp)
 
 static void check_cmd_access(char *cmd, char **args)
 {
-    if (access(args[0], X_OK) != 0)
-    {   
+    if (access(args[0], F_OK) != 0)
+    {
         ft_free_str(args);
         cmd_not_file_dir(cmd);
+    }
+    else if (access(args[0], X_OK) != 0)
+    {
+        ft_free_str(args);
+        error_exit("Permission denied");
     }
 }
 
@@ -133,8 +138,8 @@ void ft_exec_cmd(char *cmd, char **envp)
     cmd_path = ft_cmd_path(cmd_list[0], envp);
     if (!cmd_path)
 	{
+        ft_free_str(cmd_list);
         cmd_notfound(cmd_list[0]);
-		ft_free_str(cmd_list);
 	}
     if (execve(cmd_path, cmd_list, envp) == -1)
 	{
@@ -151,7 +156,8 @@ void handle_child(char **av, int pipefd[2], char **envp)
     infile = open(av[1], O_RDONLY); // open file1 (av[1]) for reading
     if (infile == -1)
     {
-		close(pipefd[1]);
+		close(pipefd[0]);
+        close(pipefd[1]);
 		error_exit("error opening input file");
     }
     if (dup2(infile, STDIN_FILENO) == -1) // redirect input from file1 (infile) -> stdin: infile | verify if dup2 was successful
@@ -180,6 +186,7 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     if (outfile == -1)
     {
         close(pipefd[0]);
+        close(pipefd[1]);
 		error_exit("error opening output file");
     }
     if (dup2(pipefd[0], STDIN_FILENO) == -1) // redirect input from pipe (pipefd[0]) -> stdin: pipefd[0] (read from pipe) | verify if dup2 was successful
