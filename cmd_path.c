@@ -6,24 +6,36 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/29 12:41:34 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:15:57 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static char *ft_env_path(char **envp)
+static char **ft_extract_env_paths(char **envp)
 {
+    char **paths;
+    char *env_path;
     int i;
 
-    i = 0;
+    paths = NULL;
+    env_path = NULL;
     while (envp && envp[i])
     {
         if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-            return (envp[i] + 5);
+        {
+            env_path = envp[i] + 5;
+            break;
+        }
         i++;
     }
-    return (NULL);
+    if (env_path)
+    {
+        paths = ft_split(env_path, ':');
+        if (!paths)
+            return (NULL);
+    }
+    return (paths);
 }
 
 static char *ft_join_path(char *path, char *cmd)
@@ -47,27 +59,25 @@ char *ft_cmd_path(char *cmd, char** envp)
 {
     int i;
     char **path_list;
-    char *path;
+    char *entire_path;
     char *env_path;
 
     if (!cmd || !envp)
         return (NULL);
     if (access(cmd, X_OK) == 0)
         return (ft_strdup(cmd));
-    env_path = ft_env_path(envp);
-    if (!env_path)
-        return (NULL);
-    path_list = ft_split(env_path, ':');
+    path_list = extract_env_paths(envp);
     if (!path_list)
         return (NULL);
     i = 0;
-    while (path_list[i])
+    while (path_list && path_list[i])
     {
-        path = ft_join_path(path_list[i], cmd);
-        if (path && access(path, X_OK) == 0)
-            return (ft_free_str(path_list), path);
-        free(path);
+        entire_path = ft_join_path(path_list[i], cmd);
+        if (entire_path && access(entire_path, F_OK | X_OK) == 0)
+            return (ft_free_str(path_list), entire_path);
+        free(entire_path);
         i++;
     }
-    return (ft_free_str(path_list), NULL);
+    ft_free_str(path_list);
+    return (NULL);
 }

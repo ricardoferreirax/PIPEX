@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/27 17:35:12 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:05:53 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,10 @@ void	ft_free_str(char **str)
 		return ;
 	i = 0;
 	while (str[i])
-		free(str[i++]);
+    {
+        free(str[i]);
+        str[i] = NULL;
+        i++;
+    }
 	free(str);
 }
