@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/29 17:12:32 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:15:59 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ char	*ft_strdup(const char *s);
 void	ft_putstr_fd(char *s, int fd);
 size_t	ft_strlen(const char *s);
 char	**ft_split(const char *s, char c);
+char	**ft_split_quotes(char const *s, char c);
 void	ft_putendl_fd(const char *s, int fd);
 void	ft_putstr_fd(char *s, int fd);
 char	*ft_strchr(const char *s, int c);
