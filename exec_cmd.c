@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/30 22:37:03 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/30 23:12:23 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,13 @@ void ft_exec_cmd(char *cmd, char **envp)
     char *cmd_path;
 
     if (!cmd || cmd[0] == '\0')
-        cmd_notfound(cmd);
+        cmd_not_found_exit(cmd, NULL);
     cmd_list = ft_parse_cmd(cmd);
     if (ft_strchr(cmd_list[0], '/'))
 		check_cmd_access(cmd, cmd_list);
     cmd_path = ft_cmd_path(cmd_list[0], envp);
     if (!cmd_path)
-	{
-        ft_free_str(cmd_list);
-        cmd_notfound(cmd_list[0]);
-	}
+        cmd_not_found_exit(cmd_list[0], cmd_list);
     if (execve(cmd_path, cmd_list, envp) == -1)
 	{
 		ft_free_str(cmd_list);
