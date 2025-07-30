@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_erros.c                                      :+:      :+:    :+:   */
+/*   pipex_errors.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 17:33:23 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/30 23:08:33 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/30 23:20:32 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void    error_exit(const char *message)
     exit(1);
 }
 
-void	cmd_not_found_exit(char *cmd, char **to_free)
+void	cmd_not_found_free(char *cmd, char **to_free)
 {
 	ft_free_str(to_free);
 	ft_putstr_fd("pipex: ", 2);
@@ -27,7 +27,7 @@ void	cmd_not_found_exit(char *cmd, char **to_free)
 	exit(127);
 }
 
-void	path_not_found_exit(char *cmd, char **to_free)
+void	path_not_found_free(char *cmd, char **to_free)
 {
 	ft_free_str(to_free);
 	ft_putstr_fd("pipex: ", 2);
