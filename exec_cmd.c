@@ -6,11 +6,24 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/30 22:29:05 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/30 22:37:03 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static char **ft_parse_cmd(char *cmd)
+{
+    char **cmd_list;
+
+    cmd_list = ft_split_quotes(cmd, ' ');
+    if (!cmd_list || !cmd_list[0])
+    {
+        ft_free_str(cmd_list);
+        cmd_notfound(cmd);
+    }
+    return (cmd_list);
+}
 
 static void check_cmd_access(char *cmd, char **args)
 {
@@ -24,19 +37,6 @@ static void check_cmd_access(char *cmd, char **args)
         ft_free_str(args);
         error_exit("Permission denied");
     }
-}
-
-static char **ft_parse_cmd(char *cmd)
-{
-    char **cmd_list;
-
-    cmd_list = ft_split_quotes(cmd, ' ');
-    if (!cmd_list || !cmd_list[0])
-    {
-        ft_free_str(cmd_list);
-        cmd_notfound(cmd);
-    }
-    return (cmd_list);
 }
 
 void ft_exec_cmd(char *cmd, char **envp)
