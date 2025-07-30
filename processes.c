@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/30 22:42:21 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/30 22:49:54 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,19 @@ void handle_child(char **av, int pipefd[2], char **envp)
     {
 		close(pipefd[0]);
         close(pipefd[1]);
-		error_exit("error opening input file");
+		error_exit("Error opening input file");
     }
     if (dup2(infile, STDIN_FILENO) == -1)
     {
         close(infile);
         close(pipefd[1]);
-        error_exit("dup2 failed (infile -> STDIN)");
+        error_exit("Error. Dup2 failed (infile -> STDIN)");
     }
     if (dup2(pipefd[1], STDOUT_FILENO) == -1)
     {
         close(infile);
         close(pipefd[1]);
-        error_exit("dup2 failed (pipefd[1] -> STDOUT)");
+        error_exit("Error. Dup2 failed (pipefd[1] -> STDOUT)");
     }
     close(pipefd[0]);
     close(pipefd[1]);
@@ -50,19 +50,19 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     {
         close(pipefd[0]);
         close(pipefd[1]);
-		error_exit("error opening output file");
+		error_exit("Error opening output file");
     }
     if (dup2(pipefd[0], STDIN_FILENO) == -1)
     {
         close(outfile);
         close(pipefd[0]);
-        error_exit("dup2 failed (pipefd[0] -> STDIN)");
+        error_exit("Error. Dup2 failed (pipefd[0] -> STDIN)");
     }
     if (dup2(outfile, STDOUT_FILENO) == -1)
     {
         close(outfile);
         close(pipefd[0]);
-        error_exit("dup2 failed (outfile -> STDOUT)");
+        error_exit("Error. Dup2 failed (outfile -> STDOUT)");
     }
     close(pipefd[1]);
     close(pipefd[0]);
