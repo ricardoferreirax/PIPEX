@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/30 23:29:51 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/31 00:07:06 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,21 @@ static char *ft_join_path(char *path, char *cmd)
     return (fullpath);
 }
 
-static char	*ft_check_direct_cmd(char *cmd)
+static char *ft_check_direct_cmd(char *cmd)
 {
-	if (ft_strchr(cmd, '/'))
-	{
-		if (access(cmd, X_OK) == 0)
-			return (ft_strdup(cmd));
-		if (access(cmd, X_OK) != 0)
-			error_exit("Permission denied");
-        else if (access(cmd, F_OK) != 0)
-			path_not_found_free(cmd, NULL);
-	}
-	return (NULL);
+    if (ft_strchr(cmd, '/'))
+    {
+        if (access(cmd, F_OK) != 0)
+        {
+            path_not_found_msg(cmd);
+            return (NULL);
+        }
+        if (access(cmd, X_OK) == 0)
+            return (ft_strdup(cmd));
+        else
+            error_exit("Permission denied");
+    }
+    return (NULL);
 }
 
 char *ft_cmd_path(char *cmd, char** envp)
