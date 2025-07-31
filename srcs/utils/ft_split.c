@@ -6,13 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 13:14:18 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/26 14:57:29 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/31 12:25:43 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <string.h>
-#include "pipex.h"
+#include "../includes/pipex.h"
 
 static int	count_words(const char *s, char sep)
 {
