@@ -6,34 +6,49 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:35 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/31 13:58:33 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
+int open_infile(char *file)
+{
+    int fd;
+
+    fd = open(file, O_RDONLY);
+    if (fd == -1)
+    {
+        perror("Error opening input file");
+        fd = open("/dev/null", O_RDONLY);
+        if (fd == -1)
+            error_exit("Failed to open /dev/null");
+    }
+    return (fd);
+}
+
 void handle_child(char **av, int pipefd[2], char **envp)
 {
     int infile;
 
-    infile = open(av[1], O_RDONLY);
+    infile = open_infile(av[1]);
     if (infile == -1)
     {
-		close(pipefd[0]);
+        close(pipefd[0]);
         close(pipefd[1]);
-		error_exit("Error opening input file");
+        error_exit("Error opening input file");
     }
     if (dup2(infile, STDIN_FILENO) == -1)
     {
         close(infile);
         close(pipefd[1]);
-        error_exit("Error. Dup2 failed (infile -> STDIN)");
+        error_exit("Error. Dup2 failed");
     }
     if (dup2(pipefd[1], STDOUT_FILENO) == -1)
     {
         close(infile);
         close(pipefd[1]);
-        error_exit("Error. Dup2 failed (pipefd[1] -> STDOUT)");
+        error_exit("Error. Dup2 failed");
     }
     close(pipefd[0]);
     close(pipefd[1]);
