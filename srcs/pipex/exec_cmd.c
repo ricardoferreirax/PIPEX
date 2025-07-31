@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 14:08:33 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:42:41 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void check_cmd_access(char *cmd, char **args)
     else if (access(args[0], X_OK) != 0)
     {
         ft_free_str(args);
-        error_exit("Permission denied");
+        error_exit("Pipex");
     }
 }
 
