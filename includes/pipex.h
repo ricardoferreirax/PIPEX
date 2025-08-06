@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 14:42:47 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/05 16:38:52 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <errno.h>
 
 void	ft_free_str(char **str);
 char	*ft_cmd_path(char *cmd, char **envp);

@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/05 14:45:03 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/05 16:39:59 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,6 @@ void ft_exec_cmd(char *cmd, char **envp)
     char **cmd_list;
     char *cmd_path;
 
-    if (!cmd || cmd[0] == '\0')
-    {
-        cmd_not_found_msg(cmd);
-        exit(127);
-    }
     cmd_list = ft_parse_cmd(cmd);
     if (ft_strchr(cmd_list[0], '/'))
 		check_cmd_access(cmd, cmd_list);
@@ -63,9 +58,12 @@ void ft_exec_cmd(char *cmd, char **envp)
         exit(127);
     }
     if (execve(cmd_path, cmd_list, envp) == -1)
-	{
+	{   
+        perror("excve failed");
 		ft_free_str(cmd_list);
 		free(cmd_path);
-		error_exit("execve failed");
+		if (errno == EACCES)
+            exit(126);
+        exit(1);
 	}
 }
