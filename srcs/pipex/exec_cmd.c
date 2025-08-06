@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 19:32:32 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 20:49:16 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ void ft_exec_cmd(char *cmd, char **envp)
 		free(cmd_path);
 		if (errno == EACCES)
             exit(126);
-        exit(1);
+        else if (errno == ENOENT)
+            exit(127);
+        exit(EXIT_FAILURE);
 	}
 }
