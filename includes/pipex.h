@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/05 16:38:52 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:54:18 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
 void	ft_free_str(char **str);
 char	*ft_cmd_path(char *cmd, char **envp);
 void    ft_exec_cmd(char *cmd, char **envp);
-void	handle_child(char **av, int pipefd[2], char **envp);
-void	handle_parent(char **av, int pipefd[2], char **envp);
-void    wait_processes(pid_t pid1, pid_t pid2);
+int     handle_second_child(int pipefd[2], char *file, char *command, char **envp);
+int     handle_first_child(int pipefd[2], char *file, char *command, char **envp);
+void	wait_children(pid_t pid1, pid_t pid2);
 char	*ft_strjoin(char const *s1, char const *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);

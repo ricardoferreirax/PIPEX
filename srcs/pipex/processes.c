@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 17:11:28 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:53:54 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
         error_exit("Error opening input file");
     }
     pid1 = fork();
-    if (pid1 == -1)
+    if (pid1 < 0)
         error_exit("Error creating the first child process");
     if (pid1 == 0)
     {
@@ -65,7 +65,7 @@ int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
         dup2_infile(infile, pipefd[1]);
         close(pipefd[1]);
         close(infile);
-        ft_exec_command(command, envp);
+        ft_exec_cmd(command, envp);
     }
     close(infile);
     return (pid1);
@@ -84,7 +84,7 @@ int handle_second_child(int pipefd[2], char *file, char *command, char **envp)
 		error_exit("Error opening output file");
     }
     pid2 = fork();
-    if (pid2 == -1)
+    if (pid2 < 0)
         error_exit ("Error creating the second child process");
     if (pid2 == 0)
     {
@@ -98,7 +98,7 @@ int handle_second_child(int pipefd[2], char *file, char *command, char **envp)
     return (pid2);
 }
 
-void wait_processes(pid_t pid1, pid_t pid2)
+void wait_children(pid_t pid1, pid_t pid2)
 {
     int	status1;
 	int	status2;

@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:06 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:39:58 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ static char *ft_join_path(char *path, char *cmd)
 
 static char *ft_check_direct_cmd(char *cmd)
 {
+    char *dup;
+    
     if (ft_strchr(cmd, '/'))
     {
         if (access(cmd, F_OK) != 0)
@@ -60,7 +62,12 @@ static char *ft_check_direct_cmd(char *cmd)
             return (NULL);
         }
         if (access(cmd, X_OK) == 0)
-            return (ft_strdup(cmd));
+        {
+            dup = ft_strdup(cmd);
+            if (!dup)
+                error_exit("dup failed");
+            return(dup);
+        }
         else
             error_exit("Permission denied");
     }
@@ -69,10 +76,10 @@ static char *ft_check_direct_cmd(char *cmd)
 
 char *ft_cmd_path(char *cmd, char** envp)
 {
-    int i;
     char **path_list;
     char *entire_path;
     char *direct_cmd;
+    int i;
 
     if (!cmd || !envp)
         return (NULL);

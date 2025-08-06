@@ -6,44 +6,32 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:30 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 19:09:41 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../includes/pipex.h"
 
-static void pipe_process(char **av, int pipefd[2], char **envp)
+int main(int ac, char **av, char **envp)
 {
-    pid_t pid1;
-    pid_t pid2;
+    int pipefd[2];
+    int pid1;
+    int pid2;
 
+    if (ac != 5)
+    {
+        ft_putstr_fd("Input Error!\n", 2); 
+        ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 outfile\n", 2);
+        exit(EXIT_FAILURE);
+    }
+    if (av[2][0] == '\0' || av[3][0] == '\0')
+        error_exit("Error! Command not valid");
     if (pipe(pipefd) == -1)
-        error_exit("Error. Pipe failed.");
-    pid1 = fork();
-    if (pid1 < 0)
-        error_exit("Error. Fork failed.");
-    if (pid1 == 0)
-       handle_child(av, pipefd, envp);
-    pid2 = fork();
-    if (pid2 < 0)
-        error_exit("Error. Fork failed.");
-    if (pid2 == 0)
-        handle_parent(av, pipefd, envp);
+        error_exit("Error creating pipe");
+    pid1 = handle_first_child(pipefd, av[1], av[2], envp);
+    pid2 = handle_second_child(pipefd, av[4], av[3], envp);
     close(pipefd[0]);
     close(pipefd[1]);
-    wait_processes(pid1, pid2);
-}
-
-int	main(int ac, char **av, char **envp)
-{
-	int	pipefd[2];
-
-	if (ac == 5)
-		pipe_process(av, pipefd, envp);
-	else
-	{
-		ft_putstr_fd("Invalid input. Try: ./pipex file1 cmd1 cmd2 file2\n", 2);
-		exit(1);
-	}
-	return (0);
+    wait_children(pid1, pid2);
+    return (0);
 }

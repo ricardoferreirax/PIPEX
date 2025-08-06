@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/05 16:39:59 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:29:43 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void ft_exec_cmd(char *cmd, char **envp)
     }
     if (execve(cmd_path, cmd_list, envp) == -1)
 	{   
-        perror("excve failed");
+        perror("execve failed");
 		ft_free_str(cmd_list);
 		free(cmd_path);
 		if (errno == EACCES)
