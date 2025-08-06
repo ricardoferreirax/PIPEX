@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/05 15:05:05 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 16:59:13 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,33 +27,63 @@ int open_infile(char *file)
     return (fd);
 }
 
-void handle_child(char **av, int pipefd[2], char **envp)
+static void dup2_verification(int infile, int pipefd[2])
 {
+    if (dup2(infile, STDIN_FILENO) == -1)
+        {
+            close(infile);
+            close(pipefd[1]);
+            error_exit("Error. Dup2 failed (stdin)");
+        }
+        if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+        {
+            close(infile);
+            close(pipefd[1]);
+            error_exit("Error. Dup2 failed (stdout)");
+        }
+}
+
+int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
+{
+    int pid1;
     int infile;
 
-    infile = open_infile(av[1]);
+    infile = open_infile(file);
     if (infile == -1)
     {
         close(pipefd[0]);
         close(pipefd[1]);
         error_exit("Error opening input file");
     }
-    if (dup2(infile, STDIN_FILENO) == -1)
+    pid1 = fork();
+    if (pid1 == -1)
+        error_exit("Error creating the first child process");
+    if (pid1 == 0)
     {
-        close(infile);
+        close(pipefd[0]);
+        dup2_verification(infile, pipefd);
         close(pipefd[1]);
-        error_exit("Error. Dup2 failed");
-    }
-    if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-    {
         close(infile);
-        close(pipefd[1]);
-        error_exit("Error. Dup2 failed");
+        ft_exec_command(command, envp);
     }
-    close(pipefd[0]);
-    close(pipefd[1]);
     close(infile);
-    ft_exec_cmd(av[2], envp);
+    return (pid1);
+}
+
+void dup2_verifcation(int infile, int pipefd[2])
+{
+    if (dup2(infile, STDIN_FILENO) == -1)
+        {
+            close(infile);
+            close(pipefd[1]);
+            error_exit("Error. Dup2 failed (stdin)");
+        }
+        if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+        {
+            close(infile);
+            close(pipefd[1]);
+            error_exit("Error. Dup2 failed (stdout)");
+        }
 }
 
 void handle_parent(char **av, int pipefd[2], char **envp)
