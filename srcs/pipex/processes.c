@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 17:53:54 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 19:31:37 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,16 +100,25 @@ int handle_second_child(int pipefd[2], char *file, char *command, char **envp)
 
 void wait_children(pid_t pid1, pid_t pid2)
 {
-    int	status1;
-	int	status2;
-	int	exit_status;
+    int status1;
+    int status2;
+    int exit_status;
+    int code;
+
     exit_status = 0;
-    
-	waitpid(pid1, &status1, 0);
-	waitpid(pid2, &status2, 0);
-	if (WIFEXITED(status1))
-		exit_status = WEXITSTATUS(status1);
-	if (WIFEXITED(status2))
-		exit_status = WEXITSTATUS(status2);
-	exit(exit_status);
+    waitpid(pid1, &status1, 0);
+    if (WIFEXITED(status1))
+    {
+        code = WEXITSTATUS(status1);
+        if (code != 0)
+            exit_status = code;
+    }
+    waitpid(pid2, &status2, 0);
+    if (WIFEXITED(status2))
+    {
+        code = WEXITSTATUS(status2);
+        if (code != 0)
+            exit_status = code;
+    }
+    exit(exit_status);
 }
