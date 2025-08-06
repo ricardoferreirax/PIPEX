@@ -6,41 +6,42 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 16:59:13 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:11:28 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
-int open_infile(char *file)
-{
-    int fd;
-
-    fd = open(file, O_RDONLY);
-    if (fd == -1)
-    {
-        perror("Error opening input file");
-        fd = open("/dev/null", O_RDONLY);
-        if (fd == -1)
-            error_exit("Failed to open /dev/null");
-    }
-    return (fd);
-}
-
-static void dup2_verification(int infile, int pipefd[2])
+static void dup2_infile(int infile, int pipe_write)
 {
     if (dup2(infile, STDIN_FILENO) == -1)
-        {
-            close(infile);
-            close(pipefd[1]);
-            error_exit("Error. Dup2 failed (stdin)");
-        }
-        if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-        {
-            close(infile);
-            close(pipefd[1]);
-            error_exit("Error. Dup2 failed (stdout)");
-        }
+    {
+        close(infile);
+        close(pipe_write);
+        error_exit("Error. Dup2 failed (stdin)");
+    }
+    if (dup2(pipe_write, STDOUT_FILENO) == -1)
+    {
+        close(infile);
+        close(pipe_write);
+        error_exit("Error. Dup2 failed (stdout)");
+    }
+}
+
+static void dup2_outfile(int outfile, int pipe_read)
+{
+    if (dup2(pipe_read, STDIN_FILENO) == -1)
+    {
+        close(outfile);
+        close(pipe_read);
+        error_exit("Error. Dup2 failed (pipefd[0] -> STDIN)");
+    }
+    if (dup2(outfile, STDOUT_FILENO) == -1)
+    {
+        close(outfile);
+        close(pipe_read);
+        error_exit("Error. Dup2 failed (outfile -> STDOUT)");
+    }
 }
 
 int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
@@ -48,7 +49,7 @@ int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
     int pid1;
     int infile;
 
-    infile = open_infile(file);
+    infile = open(file, O_RDONLY);
     if (infile == -1)
     {
         close(pipefd[0]);
@@ -61,7 +62,7 @@ int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
     if (pid1 == 0)
     {
         close(pipefd[0]);
-        dup2_verification(infile, pipefd);
+        dup2_infile(infile, pipefd[1]);
         close(pipefd[1]);
         close(infile);
         ft_exec_command(command, envp);
@@ -70,49 +71,31 @@ int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
     return (pid1);
 }
 
-void dup2_verifcation(int infile, int pipefd[2])
+int handle_second_child(int pipefd[2], char *file, char *command, char **envp)
 {
-    if (dup2(infile, STDIN_FILENO) == -1)
-        {
-            close(infile);
-            close(pipefd[1]);
-            error_exit("Error. Dup2 failed (stdin)");
-        }
-        if (dup2(pipefd[1], STDOUT_FILENO) == -1)
-        {
-            close(infile);
-            close(pipefd[1]);
-            error_exit("Error. Dup2 failed (stdout)");
-        }
-}
-
-void handle_parent(char **av, int pipefd[2], char **envp)
-{
+    int pid2;
     int outfile;
 
-    outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    outfile = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (outfile == -1)
     {
         close(pipefd[0]);
         close(pipefd[1]);
 		error_exit("Error opening output file");
     }
-    if (dup2(pipefd[0], STDIN_FILENO) == -1)
+    pid2 = fork();
+    if (pid2 == -1)
+        error_exit ("Error creating the second child process");
+    if (pid2 == 0)
     {
-        close(outfile);
+        close(pipefd[1]);
+        dup2_outfile(outfile, pipefd[0]);
         close(pipefd[0]);
-        error_exit("Error. Dup2 failed (pipefd[0] -> STDIN)");
-    }
-    if (dup2(outfile, STDOUT_FILENO) == -1)
-    {
         close(outfile);
-        close(pipefd[0]);
-        error_exit("Error. Dup2 failed (outfile -> STDOUT)");
+        ft_exec_cmd(command, envp);
     }
-    close(pipefd[1]);
-    close(pipefd[0]);
     close(outfile);
-    ft_exec_cmd(av[3], envp);
+    return (pid2);
 }
 
 void wait_processes(pid_t pid1, pid_t pid2)
