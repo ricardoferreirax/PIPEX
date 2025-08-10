@@ -6,9 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 22:45:19 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/10 22:45:20 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/10 22:48:12 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "../../includes/pipex_bonus.h"
 
 static char **ft_extract_env_paths(char **envp)
 {
