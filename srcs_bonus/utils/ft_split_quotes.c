@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 16:43:13 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:40 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/10 22:53:08 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 static void quote_check(char c, char *quote)
 {
