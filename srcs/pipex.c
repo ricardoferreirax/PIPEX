@@ -6,17 +6,47 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 19:09:41 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:16:36 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-int main(int ac, char **av, char **envp)
+static pid_t	safe_fork(char **cmd_args)
 {
-    int pipefd[2];
-    int pid1;
-    int pid2;
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("pipex: fork failed");
+		ft_free_str(cmd_args);
+		exit(1);
+	}
+	return (pid);
+}
+
+static void pipe_process(char **av, int pipefd[2], char **envp)
+{
+    pid_t pid1;
+    pid_t pid2;
+
+    if (pipe(pipefd) == -1)
+        error_exit("Error creating pipe.");
+    pid1 = safe_fork(av);
+    if (pid1 == 0)
+       handle_child(av, pipefd, envp);
+    pid2 = safe_fork(av);
+    if (pid2 == 0)
+        handle_parent(av, pipefd, envp);
+    close(pipefd[0]);
+    close(pipefd[1]);
+    wait_processes(pid1, pid2);
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	int	pipefd[2];
 
     if (ac != 5)
     {
@@ -26,12 +56,6 @@ int main(int ac, char **av, char **envp)
     }
     if (av[2][0] == '\0' || av[3][0] == '\0')
         error_exit("Error! Command not valid");
-    if (pipe(pipefd) == -1)
-        error_exit("Error creating pipe");
-    pid1 = handle_first_child(pipefd, av[1], av[2], envp);
-    pid2 = handle_second_child(pipefd, av[4], av[3], envp);
-    close(pipefd[0]);
-    close(pipefd[1]);
-    wait_children(pid1, pid2);
-    return (0);
+    pipe_process(av, pipefd, envp);
+	return (0);
 }
