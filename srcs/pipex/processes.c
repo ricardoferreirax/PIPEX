@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/12 15:16:34 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:03:55 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,81 +44,54 @@ static void dup2_outfile(int outfile, int pipe_read)
     }
 }
 
-int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
+void handle_child(char **av, int pipefd[2], char **envp)
 {
-    int pid1;
     int infile;
 
-    pid1 = fork();
-    if (pid1 < 0)
-        error_exit("Error creating the first child process");
-    if (pid1 == 0)
+    infile = open(av[1], O_RDONLY);
+    if (infile == -1)
     {
-        infile = open(file, O_RDONLY);
-        if (infile == -1)
-        {
-            close(pipefd[0]);
-            close(pipefd[1]);
-            error_exit("Error opening input file");
-        }
-        close(pipefd[0]);
-        dup2_infile(infile, pipefd[1]);
+		close(pipefd[0]);
         close(pipefd[1]);
-        close(infile);
-        ft_exec_cmd(command, envp);
+		error_exit("Error opening input file");
     }
+    close(pipefd[0]);
+    dup2_infile(infile, pipefd[1]);
+    close(pipefd[1]);
     close(infile);
-    return (pid1);
+    ft_exec_cmd(av[2], envp);
 }
 
-int handle_second_child(int pipefd[2], char *file, char *command, char **envp)
+void handle_parent(char **av, int pipefd[2], char **envp)
 {
-    int pid2;
     int outfile;
 
-    pid2 = fork();
-    if (pid2 < 0)
-        error_exit ("Error creating the second child process");
-    if (pid2 == 0)
+    outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (outfile == -1)
     {
-        outfile = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (outfile == -1)
-        {
-            close(pipefd[0]);
-            close(pipefd[1]);
-		    error_exit("Error opening output file");
-        }
-        close(pipefd[1]);
-        dup2_outfile(outfile, pipefd[0]);
         close(pipefd[0]);
-        close(outfile);
-        ft_exec_cmd(command, envp);
+        close(pipefd[1]);
+		error_exit("Error opening output file");
     }
+    close(pipefd[1]);
+    dup2_outfile(outfile, pipefd[0]);
+    close(pipefd[0]);
     close(outfile);
-    return (pid2);
+    ft_exec_cmd(av[3], envp);
 }
 
-void wait_children(pid_t pid1, pid_t pid2)
+void wait_processes(pid_t pid1, pid_t pid2)
 {
-    int status1;
-    int status2;
-    int exit_status;
-    int code;
-
+    int	status1;
+	int	status2;
+	int	exit_status;
     exit_status = 0;
-    waitpid(pid1, &status1, 0);
-    if (WIFEXITED(status1))
-    {
-        code = WEXITSTATUS(status1);
-        if (code != 0)
-            exit_status = code;
-    }
-    waitpid(pid2, &status2, 0);
-    if (WIFEXITED(status2))
-    {
-        code = WEXITSTATUS(status2);
-        if (code != 0)
-            exit_status = code;
-    }
-    exit(exit_status);
+    
+	waitpid(pid1, &status1, 0);
+	waitpid(pid2, &status2, 0);
+	if (WIFEXITED(status1))
+		exit_status = WEXITSTATUS(status1);
+	if (WIFEXITED(status2))
+		exit_status = WEXITSTATUS(status2);
+	exit(exit_status);
 }
