@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/12 16:23:23 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:23:52 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ static void pipe_process(char **av, int pipefd[2], char **envp)
         handle_parent(av, pipefd, envp);
     close(pipefd[0]);
     close(pipefd[1]);
-    waitpid(pid[0], &status[0], 0);
-	waitpid(pid[1], &status[1], 0);
+    waitpid(pid1, &status[0], 0);
+	waitpid(pid2, &status[1], 0);
     ft_free_str(av);
     if (WIFEXITED(status[1]))
 		exit(WEXITSTATUS(status[1]));
