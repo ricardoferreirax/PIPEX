@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/11 15:17:34 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:16:34 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,18 @@ int handle_first_child(int pipefd[2], char *file, char *command, char **envp)
     int pid1;
     int infile;
 
-    infile = open(file, O_RDONLY);
-    if (infile == -1)
-    {
-        close(pipefd[0]);
-        close(pipefd[1]);
-        error_exit("Error opening input file");
-    }
     pid1 = fork();
     if (pid1 < 0)
         error_exit("Error creating the first child process");
     if (pid1 == 0)
     {
+        infile = open(file, O_RDONLY);
+        if (infile == -1)
+        {
+            close(pipefd[0]);
+            close(pipefd[1]);
+            error_exit("Error opening input file");
+        }
         close(pipefd[0]);
         dup2_infile(infile, pipefd[1]);
         close(pipefd[1]);
@@ -76,18 +76,18 @@ int handle_second_child(int pipefd[2], char *file, char *command, char **envp)
     int pid2;
     int outfile;
 
-    outfile = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (outfile == -1)
-    {
-        close(pipefd[0]);
-        close(pipefd[1]);
-		error_exit("Error opening output file");
-    }
     pid2 = fork();
     if (pid2 < 0)
         error_exit ("Error creating the second child process");
     if (pid2 == 0)
     {
+        outfile = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (outfile == -1)
+        {
+            close(pipefd[0]);
+            close(pipefd[1]);
+		    error_exit("Error opening output file");
+        }
         close(pipefd[1]);
         dup2_outfile(outfile, pipefd[0]);
         close(pipefd[0]);
