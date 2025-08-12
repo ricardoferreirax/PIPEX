@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/12 16:16:36 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:23:23 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ static void pipe_process(char **av, int pipefd[2], char **envp)
 {
     pid_t pid1;
     pid_t pid2;
+    int status[2];
 
     if (pipe(pipefd) == -1)
         error_exit("Error creating pipe.");
@@ -41,7 +42,14 @@ static void pipe_process(char **av, int pipefd[2], char **envp)
         handle_parent(av, pipefd, envp);
     close(pipefd[0]);
     close(pipefd[1]);
-    wait_processes(pid1, pid2);
+    waitpid(pid[0], &status[0], 0);
+	waitpid(pid[1], &status[1], 0);
+    ft_free_str(av);
+    if (WIFEXITED(status[1]))
+		exit(WEXITSTATUS(status[1]));
+	else if (WIFEXITED(status[0]))
+		exit(WEXITSTATUS(status[0]));
+	return (1);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -57,5 +65,4 @@ int	main(int ac, char **av, char **envp)
     if (av[2][0] == '\0' || av[3][0] == '\0')
         error_exit("Error! Command not valid");
     pipe_process(av, pipefd, envp);
-	return (0);
 }
