@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 00:33:57 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:24:10 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@ static char **ft_get_env_paths(char **envp)
     i = 0;
     paths = NULL;
     env_path = NULL;
-    while (envp[i] && !env_path)
+    while (envp[i])
     {
         if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+        {
             env_path = envp[i] + 5;
-        else
-            i++;
+            break;
+        }
+        i++;
     }
     if (!env_path)
        return (NULL);
@@ -69,7 +71,7 @@ char *ft_cmd_path(char *cmd, char** envp)
     if (!paths)
         return (NULL);
     i = 0;
-    while (paths[i] && paths)
+    while (paths[i])
     {
         fullpath = ft_join_dir_cmd(paths[i], cmd);
         if (fullpath && access(fullpath, F_OK | X_OK) == 0)

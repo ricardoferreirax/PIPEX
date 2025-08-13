@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 13:11:39 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 14:20:33 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,35 @@ static void check_cmd_access(char *cmd, char **args)
     }
 }
 
+static char *handle_cmd_path(char *cmd, char **cmd_list, char **envp)
+{
+    char *cmd_path;
+
+    if (ft_strchr(cmd_list[0], '/'))
+    {
+        check_cmd_access(cmd, cmd_list);
+        cmd_path = ft_strdup(cmd_list[0]);
+    }
+    else
+    {
+        cmd_path = ft_cmd_path(cmd_list[0], envp);
+        if (!cmd_path)
+        {
+            cmd_not_found_msg(cmd_list[0]);
+            ft_free_str(cmd_list);
+            exit(127);
+        }
+    }
+    return (cmd_path);
+}
+
 void ft_exec_cmd(char *cmd, char **envp)
 {
     char **cmd_list;
     char *cmd_path;
-
+    
     cmd_list = ft_parse_cmd(cmd);
-    if (ft_strchr(cmd_list[0], '/'))
-		check_cmd_access(cmd, cmd_list);
-    cmd_path = ft_cmd_path(cmd_list[0], envp);
-    if (!cmd_path)
-    {
-        cmd_not_found_msg(cmd_list[0]);
-        ft_free_str(cmd_list);
-        exit(127);
-    }
+    cmd_path = handle_cmd_path(cmd, cmd_list, envp);
     if (execve(cmd_path, cmd_list, envp) == -1)
 	{   
         perror("execve failed");
