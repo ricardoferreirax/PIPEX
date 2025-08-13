@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 12:43:09 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 13:31:27 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../../includes/pipex.h"
 
 static pid_t pipe_process(char **av, int pipefd[2], char **envp)
 {
