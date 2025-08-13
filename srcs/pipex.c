@@ -6,63 +6,55 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/12 16:23:52 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:43:09 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-static pid_t	safe_fork(char **cmd_args)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("pipex: fork failed");
-		ft_free_str(cmd_args);
-		exit(1);
-	}
-	return (pid);
-}
-
-static void pipe_process(char **av, int pipefd[2], char **envp)
+static pid_t pipe_process(char **av, int pipefd[2], char **envp)
 {
     pid_t pid1;
     pid_t pid2;
-    int status[2];
 
     if (pipe(pipefd) == -1)
         error_exit("Error creating pipe.");
-    pid1 = safe_fork(av);
+    pid1 = fork();
+	if (pid1 < 0)
+	{
+		perror("pipex: fork failed");
+		exit(1);
+	}
     if (pid1 == 0)
-       handle_child(av, pipefd, envp);
-    pid2 = safe_fork(av);
+       handle_first_child(av, pipefd, envp);
+    pid2 = fork();
+    if (pid2 < 0)
+	{
+		perror("pipex: fork failed");
+		exit(1);
+	}
     if (pid2 == 0)
-        handle_parent(av, pipefd, envp);
+        handle_second_child(av, pipefd, envp);
     close(pipefd[0]);
     close(pipefd[1]);
-    waitpid(pid1, &status[0], 0);
-	waitpid(pid2, &status[1], 0);
-    ft_free_str(av);
-    if (WIFEXITED(status[1]))
-		exit(WEXITSTATUS(status[1]));
-	else if (WIFEXITED(status[0]))
-		exit(WEXITSTATUS(status[0]));
-	return (1);
+    return (pid2);
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	int	pipefd[2];
-
-    if (ac != 5)
+    int    pipefd[2];
+    int    last_pid;
+    int    exit_status;
+    
+	if (ac != 5)
     {
-        ft_putstr_fd("Input Error!\n", 2); 
+        ft_putstr_fd("Input Error!\n", 2);
         ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 outfile\n", 2);
-        exit(EXIT_FAILURE);
+        return (EXIT_FAILURE);
     }
     if (av[2][0] == '\0' || av[3][0] == '\0')
         error_exit("Error! Command not valid");
-    pipe_process(av, pipefd, envp);
+    last_pid = pipe_process(av, pipefd, envp);
+    exit_status = wait_processes(last_pid);
+    return (exit_status);
 }

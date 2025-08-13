@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 17:54:18 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 00:26:53 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,18 @@
 # include <sys/stat.h>
 # include <errno.h>
 
+typedef struct s_pid
+{
+	int		last_pid;
+	int		last_status;
+}	t_pid;
+
 void	ft_free_str(char **str);
 char	*ft_cmd_path(char *cmd, char **envp);
 void    ft_exec_cmd(char *cmd, char **envp);
-int     handle_second_child(int pipefd[2], char *file, char *command, char **envp);
-int     handle_first_child(int pipefd[2], char *file, char *command, char **envp);
-void	wait_children(pid_t pid1, pid_t pid2);
+void    handle_first_child(char **av, int pipefd[2], char **envp);
+void    handle_second_child(char **av, int pipefd[2], char **envp);
+int	    wait_processes(int last_pid);
 char	*ft_strjoin(char const *s1, char const *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);

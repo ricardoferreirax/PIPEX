@@ -6,98 +6,77 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/06 17:39:58 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 00:33:57 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
-static char **ft_extract_env_paths(char **envp)
+static char **ft_get_env_paths(char **envp)
 {
     char **paths;
     char *env_path;
     int i;
 
+    if (!envp)
+        return (NULL);
     i = 0;
     paths = NULL;
     env_path = NULL;
-    while (envp && envp[i])
+    while (envp[i] && !env_path)
     {
         if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-        {
             env_path = envp[i] + 5;
-            break;
-        }
-        i++;
+        else
+            i++;
     }
-    if (env_path)
-        paths = ft_split(env_path, ':');
+    if (!env_path)
+       return (NULL);
+    paths = ft_split(env_path, ':');
+    if (!paths)
+        exit(1);
     return (paths);
 }
 
-static char *ft_join_path(char *path, char *cmd)
+static char *ft_join_dir_cmd(char *dir, char *cmd)
 {
-    char *tmp;
+    char *dir_slash;
     char *fullpath;
 
-    if (!path || !cmd)
+    if (!dir || !cmd)
         return (NULL);
-    tmp = ft_strjoin(path, "/");
-    if (!tmp)
+    dir_slash = ft_strjoin(dir, "/");
+    if (!dir_slash)
         return (NULL);
-    fullpath = ft_strjoin(tmp, cmd);
-    free(tmp);
+    fullpath = ft_strjoin(dir_slash, cmd);
+    free(dir_slash);
+    if (!fullpath)
+        return (NULL);
     return (fullpath);
-}
-
-static char *ft_check_direct_cmd(char *cmd)
-{
-    char *dup;
-    
-    if (ft_strchr(cmd, '/'))
-    {
-        if (access(cmd, F_OK) != 0)
-        {
-            path_not_found_msg(cmd);
-            return (NULL);
-        }
-        if (access(cmd, X_OK) == 0)
-        {
-            dup = ft_strdup(cmd);
-            if (!dup)
-                error_exit("dup failed");
-            return(dup);
-        }
-        else
-            error_exit("Permission denied");
-    }
-    return (NULL);
 }
 
 char *ft_cmd_path(char *cmd, char** envp)
 {
-    char **path_list;
-    char *entire_path;
-    char *direct_cmd;
+    char **paths;
+    char *fullpath;
     int i;
 
     if (!cmd || !envp)
         return (NULL);
-    direct_cmd = ft_check_direct_cmd(cmd);
-    if (direct_cmd)
-        return (direct_cmd);
-    path_list = ft_extract_env_paths(envp);
-    if (!path_list)
+    if (strchr(cmd, '/'))
+        return (ft_strdup(cmd));
+    paths = ft_get_env_paths(envp);
+    if (!paths)
         return (NULL);
     i = 0;
-    while (path_list[i])
+    while (paths[i] && paths)
     {
-        entire_path = ft_join_path(path_list[i], cmd);
-        if (entire_path && access(entire_path, F_OK | X_OK) == 0)
-            return (ft_free_str(path_list), entire_path);
-        free(entire_path);
+        fullpath = ft_join_dir_cmd(paths[i], cmd);
+        if (fullpath && access(fullpath, F_OK | X_OK) == 0)
+            return (ft_free_str(paths), fullpath);
+        free(fullpath);
         i++;
     }
-    ft_free_str(path_list);
+    ft_free_str(paths);
     return (NULL);
 }

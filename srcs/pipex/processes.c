@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/12 16:03:55 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 00:24:37 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static void dup2_outfile(int outfile, int pipe_read)
     }
 }
 
-void handle_child(char **av, int pipefd[2], char **envp)
+void handle_first_child(char **av, int pipefd[2], char **envp)
 {
     int infile;
 
@@ -62,7 +62,7 @@ void handle_child(char **av, int pipefd[2], char **envp)
     ft_exec_cmd(av[2], envp);
 }
 
-void handle_parent(char **av, int pipefd[2], char **envp)
+void handle_second_child(char **av, int pipefd[2], char **envp)
 {
     int outfile;
 
@@ -80,18 +80,19 @@ void handle_parent(char **av, int pipefd[2], char **envp)
     ft_exec_cmd(av[3], envp);
 }
 
-void wait_processes(pid_t pid1, pid_t pid2)
+int	wait_processes(int last_pid)
 {
-    int	status1;
-	int	status2;
-	int	exit_status;
-    exit_status = 0;
-    
-	waitpid(pid1, &status1, 0);
-	waitpid(pid2, &status2, 0);
-	if (WIFEXITED(status1))
-		exit_status = WEXITSTATUS(status1);
-	if (WIFEXITED(status2))
-		exit_status = WEXITSTATUS(status2);
-	exit(exit_status);
+	int	pid;
+	int	status;
+	int	last_status;
+
+	pid = 1;
+	last_status = 0;
+	while (pid > 0)
+	{
+		pid = wait(&status);
+		if (pid == last_pid && WIFEXITED(status))
+			last_status = WEXITSTATUS(status);
+	}
+	return (last_status);
 }
