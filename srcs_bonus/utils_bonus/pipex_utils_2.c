@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:59 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:20:48 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 void	ft_putstr_fd(char *s, int fd)
 {
@@ -72,18 +72,12 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (substring);
 }
 
-void	ft_free_str(char **str)
+int	ft_strcmp(const char *s1, const char *s2)
 {
 	int	i;
 
-	if (!str)
-		return ;
 	i = 0;
-	while (str[i])
-    {
-        free(str[i]);
-        str[i] = NULL;
-        i++;
-    }
-	free(str);
+	while (s1[i] && s2[i] && (s1[i] == s2[i]))
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

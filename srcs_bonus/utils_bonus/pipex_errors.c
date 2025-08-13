@@ -6,11 +6,27 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 17:33:23 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 14:28:20 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:20:34 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
+
+void	ft_free_str(char **str)
+{
+	int	i;
+
+	if (!str)
+		return ;
+	i = 0;
+	while (str[i])
+    {
+        free(str[i]);
+        str[i] = NULL;
+        i++;
+    }
+	free(str);
+}
 
 void    error_exit(const char *message)
 {

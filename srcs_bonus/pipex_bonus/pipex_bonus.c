@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 15:21:32 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:29:49 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 int	main(int ac, char **av, char **envp)
 {
@@ -39,7 +39,7 @@ int	main(int ac, char **av, char **envp)
 	else
     {
         ft_putstr_fd("Input Error!\n", 2);
-        ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 outfile\n", 2);
+        ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 cmd[...] outfile\n", 2);
         return (EXIT_FAILURE);
     }
 	return (EXIT_SUCCESS);

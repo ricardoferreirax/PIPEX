@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 14:20:33 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/08/13 18:21:14 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 static char **ft_parse_cmd(char *cmd)
 {
