@@ -6,11 +6,17 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/01 11:19:22 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/01 16:22:04 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex_bonus.h"
+
+static int print_usage_exit(void)
+{
+	ft_putstr_fd("Error!\nUse: ./pipex infile cmd1 cmd2 cmd[...] outfile", 2);
+    return (EXIT_FAILURE);
+}
 
 int	main(int ac, char **av, char **envp)
 {
@@ -27,20 +33,17 @@ int	main(int ac, char **av, char **envp)
 		else
 			open_input(av[1]);
 		i = 2 + append;
+		first_child(av[i++], envp);
 		while (i < ac - 2)
-			children_process(av[i++], envp, 0);
+			middle_child(av[i++], envp);
 		output_fd = open_output(av[ac - 1], append);
-		dup2(output_fd, STDOUT_FILENO);
+		safe_dup2(output_fd, STDOUT_FILENO);
 		close(output_fd);
-		pid.last_pid = children_process(av[ac - 2], envp, 1);
+		pid.last_pid = last_child(av[ac - 2], envp);
 		pid.last_status = wait_processes(pid.last_pid);
 		return (pid.last_status);
 	}
 	else
-    {
-        ft_putstr_fd("Input Error!\n", 2);
-        ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 cmd[...] outfile\n", 2);
-        return (EXIT_FAILURE);
-    }
+		print_usage_exit();
 	return (EXIT_SUCCESS);
 }
