@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:51:44 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 15:35:38 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/01 11:18:11 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	here_doc(char *limiter)
 		{
 			write(1, "heredoc> ", 9);
 			line = get_next_line(STDIN_FILENO);
-			if (!line || ft_strcmp(line, limiter) - 10 == 0)
+			if (!line || !line[0] || ft_strcmp(line, limiter) - 10 == 0)
 			{
 				free(line);
 				exit(EXIT_SUCCESS);
