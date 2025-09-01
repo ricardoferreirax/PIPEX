@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 18:29:49 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/01 11:19:22 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ int	main(int ac, char **av, char **envp)
 		else
 			open_input(av[1]);
 		i = 2 + append;
-		output_fd = open_output(av[ac - 1], append);
 		while (i < ac - 2)
 			children_process(av[i++], envp, 0);
+		output_fd = open_output(av[ac - 1], append);
 		dup2(output_fd, STDOUT_FILENO);
 		close(output_fd);
 		pid.last_pid = children_process(av[ac - 2], envp, 1);
