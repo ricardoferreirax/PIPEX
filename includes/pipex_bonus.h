@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 22:47:41 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/08/13 18:28:11 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/01 16:14:08 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ typedef struct s_pid
 
 void	ft_free_str(char **str);
 size_t	ft_strlen_g(const char *str);
-pid_t	children_process(char *cmd, char **envp, int last);
+pid_t	first_child(char *cmd, char **envp);
+pid_t    middle_child(char *cmd, char **envp);
+pid_t    last_child(char *cmd, char **envp);
 int     open_output(char *file, int append);
 int     open_input(char *file);
 int	    here_doc(char *limiter);
