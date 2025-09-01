@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/10 22:47:41 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/01 16:14:08 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/01 16:25:48 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_pid
 }	t_pid;
 
 void	ft_free_str(char **str);
+void safe_dup2(int oldfd, int newfd);
 size_t	ft_strlen_g(const char *str);
 pid_t	first_child(char *cmd, char **envp);
 pid_t    middle_child(char *cmd, char **envp);

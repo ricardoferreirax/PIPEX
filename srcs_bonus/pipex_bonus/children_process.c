@@ -6,13 +6,13 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/01 16:12:46 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/01 16:25:35 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex_bonus.h"
 
-static void safe_dup2(int oldfd, int newfd)
+void safe_dup2(int oldfd, int newfd)
 {
     if (dup2(oldfd, newfd) == -1)
     {
