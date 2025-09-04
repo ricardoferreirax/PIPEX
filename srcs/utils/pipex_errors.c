@@ -6,16 +6,16 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 17:33:23 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 14:28:20 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/04 09:13:32 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
-void    error_exit(const char *message)
+void	error_exit(const char *message)
 {
-    perror(message);
-    exit(1);
+	perror(message);
+	exit(1);
 }
 
 void	cmd_not_found_msg(char *cmd)

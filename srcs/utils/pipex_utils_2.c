@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:59 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/04 09:13:38 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	ft_putendl_fd(const char *s, int fd)
 
 char	*ft_strchr(const char *s, int c)
 {
-	int		idx;
+	int	idx;
 
 	idx = 0;
 	while (s[idx] != '\0')
@@ -53,8 +53,8 @@ char	*ft_strchr(const char *s, int c)
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	char		*substring;
-	size_t		idx;
+	char	*substring;
+	size_t	idx;
 
 	if (!s)
 		return (NULL);
@@ -80,10 +80,10 @@ void	ft_free_str(char **str)
 		return ;
 	i = 0;
 	while (str[i])
-    {
-        free(str[i]);
-        str[i] = NULL;
-        i++;
-    }
+	{
+		free(str[i]);
+		str[i] = NULL;
+		i++;
+	}
 	free(str);
 }

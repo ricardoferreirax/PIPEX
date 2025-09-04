@@ -6,47 +6,47 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 16:43:13 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:40 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/04 09:13:26 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
-static void quote_check(char c, char *quote)
+static void	quote_check(char c, char *quote)
 {
-    if (c == '\'' || c == '"')
-    {
-        if (*quote == c)
-            *quote = 0;
-        else if (*quote == 0)
-            *quote = c;
-    }
+	if (c == '\'' || c == '"')
+	{
+		if (*quote == c)
+			*quote = 0;
+		else if (*quote == 0)
+			*quote = c;
+	}
 }
 
-static int count_words(const char *s, char sep)
+static int	count_words(const char *s, char sep)
 {
-    int i;
-    int count;
-    int in_word;
-    char quote;
+	int		i;
+	int		count;
+	int		in_word;
+	char	quote;
 
-    i = 0;
-    count = 0;
-    in_word = 0;
-    quote = 0;
-    while (s[i] != '\0')
-    {
-        quote_check(s[i], &quote);
-        if ((s[i] != sep || quote) && in_word == 0)
-        {
-            count++;
-            in_word = 1;
-        }
-        if (s[i] == sep && !quote)
-            in_word = 0;
-        i++;
-    }
-    return (count);
+	i = 0;
+	count = 0;
+	in_word = 0;
+	quote = 0;
+	while (s[i] != '\0')
+	{
+		quote_check(s[i], &quote);
+		if ((s[i] != sep || quote) && in_word == 0)
+		{
+			count++;
+			in_word = 1;
+		}
+		if (s[i] == sep && !quote)
+			in_word = 0;
+		i++;
+	}
+	return (count);
 }
 
 static void	free_all(char **arr, int size)
@@ -61,9 +61,9 @@ static void	free_all(char **arr, int size)
 
 static int	fill_word_array(char **arr, char const *s, char c)
 {
-	int	i;
-	int	len;
-	int	start;
+	int		i;
+	int		len;
+	int		start;
 	char	delimiter;
 
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:01:37 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/07/31 12:38:55 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/04 09:13:35 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 size_t	ft_strlen(const char *s)
 {
-    size_t	len;
+	size_t	len;
 
-    if (!s)
-        return (0);
-    len = 0;
-    while (s[len] != '\0')
-        len++;
-    return (len);
+	if (!s)
+		return (0);
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	return (len);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
@@ -62,8 +62,8 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	tmp_s1 = (unsigned char *)s1;
 	tmp_s2 = (unsigned char *)s2;
 	idx = 0;
-	while (tmp_s1[idx] && tmp_s2[idx] && tmp_s1[idx] == tmp_s2[idx]
-		&& idx < n - 1)
+	while (tmp_s1[idx] && tmp_s2[idx] && tmp_s1[idx] == tmp_s2[idx] && idx < n
+		- 1)
 		idx++;
 	return (tmp_s1[idx] - tmp_s2[idx]);
 }
