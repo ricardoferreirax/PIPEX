@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/04 09:13:21 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/06 16:57:25 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	*ft_cmd_path(char *cmd, char **envp)
 
 	if (!cmd || !envp)
 		return (NULL);
-	if (strchr(cmd, '/'))
+	if (ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
 	paths = ft_get_env_paths(envp);
 	if (!paths)

@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/04 09:13:14 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/06 16:57:12 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ int	main(int ac, char **av, char **envp)
 		ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 outfile\n", 2);
 		return (EXIT_FAILURE);
 	}
-	if (av[2][0] == '\0' || av[3][0] == '\0')
-		error_exit("Error! Command not valid");
 	last_pid = pipe_process(av, pipefd, envp);
 	exit_status = wait_processes(last_pid);
 	return (exit_status);
