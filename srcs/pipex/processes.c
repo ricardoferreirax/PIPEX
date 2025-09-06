@@ -6,40 +6,40 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/06 17:10:12 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/06 17:18:41 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
-static void	dup2_infile(int infile, int pipe_write)
+static void	dup2_infile(int infile_fd, int pipe_write_fd)
 {
-	if (dup2(infile, STDIN_FILENO) == -1)
+	if (dup2(infile_fd, STDIN_FILENO) == -1)
 	{
-		close(infile);
-		close(pipe_write);
+		close(infile_fd);
+		close(pipe_write_fd);
 		error_exit("Error. Dup2 failed (stdin)");
 	}
-	if (dup2(pipe_write, STDOUT_FILENO) == -1)
+	if (dup2(pipe_write_fd, STDOUT_FILENO) == -1)
 	{
-		close(infile);
-		close(pipe_write);
+		close(infile_fd);
+		close(pipe_write_fd);
 		error_exit("Error. Dup2 failed (stdout)");
 	}
 }
 
-static void	dup2_outfile(int outfile, int pipe_read)
+static void	dup2_outfile(int outfile_fd, int pipe_read_fd)
 {
-	if (dup2(pipe_read, STDIN_FILENO) == -1)
+	if (dup2(pipe_read_fd, STDIN_FILENO) == -1)
 	{
-		close(outfile);
-		close(pipe_read);
+		close(outfile_fd);
+		close(pipe_read_fd);
 		error_exit("Error. Dup2 failed (pipefd[0] -> STDIN)");
 	}
-	if (dup2(outfile, STDOUT_FILENO) == -1)
+	if (dup2(outfile_fd, STDOUT_FILENO) == -1)
 	{
-		close(outfile);
-		close(pipe_read);
+		close(outfile_fd);
+		close(pipe_read_fd);
 		error_exit("Error. Dup2 failed (outfile -> STDOUT)");
 	}
 }
@@ -64,19 +64,19 @@ void	handle_first_child(char **av, int pipefd[2], char **envp)
 
 void	handle_second_child(char **av, int pipefd[2], char **envp)
 {
-	int	outfile;
+	int	outfile_fd;
 
-	outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (outfile == -1)
+	outfile_fd = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfile_fd == -1)
 	{
 		close(pipefd[0]);
 		close(pipefd[1]);
 		error_exit("Error opening output file");
 	}
 	close(pipefd[1]);
-	dup2_outfile(outfile, pipefd[0]);
+	dup2_outfile(outfile_fd, pipefd[0]);
 	close(pipefd[0]);
-	close(outfile);
+	close(outfile_fd);
 	ft_exec_cmd(av[3], envp);
 }
 
