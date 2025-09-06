@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/04 09:13:07 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/06 17:10:12 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,19 +46,19 @@ static void	dup2_outfile(int outfile, int pipe_read)
 
 void	handle_first_child(char **av, int pipefd[2], char **envp)
 {
-	int	infile;
+	int	infile_fd;
 
-	infile = open(av[1], O_RDONLY);
-	if (infile == -1)
+	infile_fd = open(av[1], O_RDONLY);
+	if (infile_fd == -1)
 	{
 		close(pipefd[0]);
 		close(pipefd[1]);
 		error_exit("Error opening input file");
 	}
 	close(pipefd[0]);
-	dup2_infile(infile, pipefd[1]);
+	dup2_infile(infile_fd, pipefd[1]);
 	close(pipefd[1]);
-	close(infile);
+	close(infile_fd);
 	ft_exec_cmd(av[2], envp);
 }
 
