@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:37:52 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/04 09:13:18 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/06 22:48:58 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,18 @@ static char	**ft_parse_cmd(char *cmd)
 	return (cmd_list);
 }
 
-static void	check_cmd_access(char *cmd, char **args)
+static void	check_cmd_access(char *cmd, char **cmd_list)
 {
-	if (access(args[0], F_OK) != 0)
+	if (access(cmd_list[0], F_OK) != 0)
 	{
 		path_not_found_msg(cmd);
-		ft_free_str(args);
+		ft_free_str(cmd_list);
 		exit(127);
 	}
-	else if (access(args[0], X_OK) != 0)
+	else if (access(cmd_list[0], X_OK) != 0)
 	{
 		perror("Pipex");
-		ft_free_str(args);
+		ft_free_str(cmd_list);
 		exit(126);
 	}
 }
