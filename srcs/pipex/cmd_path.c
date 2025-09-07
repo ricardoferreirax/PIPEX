@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:39:28 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/07 00:10:36 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/07 00:32:37 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,14 @@ static char	**ft_get_envpath_dirs(char **envp)
 	return (path_dirs);
 }
 
-static char	*ft_join_dir_cmd(char *dir, char *cmd)
+static char	*ft_join_dir_cmd(char *path_dir, char *cmd)
 {
 	char	*dir_slash;
 	char	*fullpath;
 
-	if (!dir || !cmd)
+	if (!path_dir || !cmd)
 		return (NULL);
-	dir_slash = ft_strjoin(dir, "/");
+	dir_slash = ft_strjoin(path_dir, "/");
 	if (!dir_slash)
 		return (NULL);
 	fullpath = ft_strjoin(dir_slash, cmd);
