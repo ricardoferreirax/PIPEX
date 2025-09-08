@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:33:33 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 20:01:39 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 21:24:14 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ static void    ft_heredoc(int ac, char **av, int *oldfd)
         read_till_limiter(av, pipefd);
     close(pipefd[1]);
     *oldfd = pipefd[0];
+    wait(NULL);
 }
 
 static pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char **envp)
