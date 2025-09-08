@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:55:53 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 01:33:41 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 19:55:34 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,17 @@ void	ft_free_str(char **str)
 	free(str);
 }
 
-void	get_pipe_and_fork(int *pipefd, pid_t *pid)
+void	get_pipe_and_fork(int pipefd[2], pid_t *pid)
 {
 	if (pipe(pipefd) == -1)
 		error_exit("Error creating pipe.");
 	*pid = fork();
 	if (*pid < 0)
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
 		error_exit("Fork Failed!");
+	}
 }
 
 void safe_dup2(int oldfd, int newfd)

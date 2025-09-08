@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 16:38:37 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 20:29:43 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int main(int ac, char **av, char **envp)
 	int last_pid;
 	int exit_code;
 
-	if (ac < 5)
+	if (ac != 5)
 		show_usage_exit1();
 	first_child(av, &prev_readfd, envp);
 	last_pid = last_child(ac, av, prev_readfd, envp);

@@ -6,13 +6,13 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:33:33 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 17:12:44 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 20:01:39 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex_bonus.h"
 
-static void read_till_limiter_and_pipe(char **av, int pipefd[2])
+static void read_till_limiter(char **av, int pipefd[2])
 {
     char *line;
 
@@ -24,7 +24,8 @@ static void read_till_limiter_and_pipe(char **av, int pipefd[2])
         if (!line)
             break ;
         if (strncmp(line, av[2], ft_strlen(av[2])) == 0 
-            && line[ft_strlen(av[2])] == '\n')
+            && line[ft_strlen(av[2])] == '\n' 
+            && line[ft_strlen(av[2]) + 1] == '\0')
         {
             free(line);
             break ;
@@ -37,23 +38,60 @@ static void read_till_limiter_and_pipe(char **av, int pipefd[2])
     exit(0);
 }
 
-void    ft_heredoc(int ac, char **av, int *oldfd, char **envp)
+static void    ft_heredoc(int ac, char **av, int *oldfd)
 {
     int pipefd[2];
     pid_t pid;
 
-    if (ac < 6)
-        show_usage_exit2();
-    if (pipe(pipefd) == -1)
-        error_exit("Pipe");
+    (void)ac;
+    get_pipe_and_fork(pipefd, &pid);
+    if (pid == 0)
+        read_till_limiter(av, pipefd);
+    close(pipefd[1]);
+    *oldfd = pipefd[0];
+}
+
+static pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char **envp)
+{
+    int append_fd;
+    pid_t pid;
+
     pid = fork();
     if (pid < 0)
         error_exit("Fork Failed!");
     if (pid == 0)
-        read_till_limiter_and_pipe(av, pipefd);
-    close(pipefd[1]);
-    *oldfd = pipefd[0];
-    wait(NULL);
-    middle_child(av, oldfd, envp, 3);
+    {
+        append_fd = open(av[ac -1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (append_fd == -1)
+        {
+            close(oldfd);
+            error_exit("Error on outfile!");
+        }
+        safe_dup2(oldfd, STDIN_FILENO);
+        safe_dup2(append_fd, STDOUT_FILENO);
+        close(append_fd);
+        close(oldfd);
+        ft_exec_cmd(av[ac - 2], envp);
+    }
+    close(oldfd);
+	return (pid);
 }
 
+pid_t ft_heredoc_pipeline(int ac, char **av, char **envp)
+{
+    int prev_readfd;
+    int i;
+    pid_t last_pid = -1;
+
+    if (ac < 6)
+        show_usage_exit2();
+    ft_heredoc(ac, av, &prev_readfd);
+    i = 3;
+    while (i < ac - 2)
+    {
+        last_pid = middle_child(av, &prev_readfd, envp, i);
+        i++;
+    }
+    last_pid = exec_last_cmd_and_append_output(ac, av, prev_readfd, envp);
+    return (last_pid);
+}

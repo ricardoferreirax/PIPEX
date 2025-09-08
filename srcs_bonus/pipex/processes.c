@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 18:06:27 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 19:47:43 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,28 +87,3 @@ pid_t	last_child(int ac, char **av, int prev_readfd, char **envp)
 	return (pid);
 }
 
-pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char **envp)
-{
-    int append_fd;
-    pid_t pid;
-
-    pid = fork();
-    if (pid < 0)
-        error_exit("Fork Failed!");
-    if (pid == 0)
-    {
-        append_fd = open(av[ac -1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-        if (append_fd == -1)
-        {
-            close(oldfd);
-            error_exit("Error on outfile!");
-        }
-        safe_dup2(oldfd, STDIN_FILENO);
-        safe_dup2(append_fd, STDOUT_FILENO);
-        close(append_fd);
-        close(oldfd);
-        ft_exec_cmd(av[ac - 2], envp);
-    }
-    close(oldfd);
-	return (pid);
-}

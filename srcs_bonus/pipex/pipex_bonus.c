@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 17:50:06 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 19:41:38 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,7 @@ int main(int ac, char **av, char **envp)
 		last_pid = last_child(ac, av, prev_readfd, envp);
 	}
 	else
-	{
-		ft_heredoc(ac, av, &prev_readfd, envp);
-		last_pid = exec_last_cmd_and_append_output(ac, av, prev_readfd, envp);
-	}
+		last_pid = ft_heredoc_pipeline(ac, av, envp);
 	exit_code = wait_processes(last_pid);
 	return (exit_code);
 }
