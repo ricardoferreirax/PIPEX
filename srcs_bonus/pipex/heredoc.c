@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:33:33 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 02:33:31 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 17:12:44 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 static void read_till_limiter_and_pipe(char **av, int pipefd[2])
 {
@@ -42,8 +42,8 @@ void    ft_heredoc(int ac, char **av, int *oldfd, char **envp)
     int pipefd[2];
     pid_t pid;
 
-    if (ac != 6)
-        show_usage_heredoc();
+    if (ac < 6)
+        show_usage_exit2();
     if (pipe(pipefd) == -1)
         error_exit("Pipe");
     pid = fork();

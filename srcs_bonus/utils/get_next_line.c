@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 15:37:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 02:33:47 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:27:52 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 static size_t	ft_strlen_g(const char *str)
 {

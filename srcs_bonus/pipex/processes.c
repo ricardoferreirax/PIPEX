@@ -6,11 +6,11 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 16:25:50 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 18:06:27 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/pipex.h"
+#include "../../includes/pipex_bonus.h"
 
 void	first_child(char **av, int *prev_readfd, char **envp)
 {
@@ -38,6 +38,29 @@ void	first_child(char **av, int *prev_readfd, char **envp)
 	*prev_readfd = pipefd[0];
 }
 
+pid_t	middle_child(char **av, int *prev_readfd, char **envp, int j)
+{
+	int in_fd;
+	int pipefd[2];
+	pid_t pid;
+
+	in_fd = *prev_readfd;
+	get_pipe_and_fork(pipefd, &pid);
+	if (pid == 0)
+	{
+		close(pipefd[0]);
+		safe_dup2(in_fd, STDIN_FILENO);
+		safe_dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[1]);
+		close(in_fd);
+		ft_exec_cmd(av[j], envp);
+	}
+	close(in_fd);
+	close(pipefd[1]);
+	*prev_readfd = pipefd[0];
+	return (pid);
+}
+
 pid_t	last_child(int ac, char **av, int prev_readfd, char **envp)
 {
 	int	outfile_fd;
@@ -61,5 +84,31 @@ pid_t	last_child(int ac, char **av, int prev_readfd, char **envp)
 	    ft_exec_cmd(av[ac - 2], envp);
 	}
 	close(prev_readfd);
+	return (pid);
+}
+
+pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char **envp)
+{
+    int append_fd;
+    pid_t pid;
+
+    pid = fork();
+    if (pid < 0)
+        error_exit("Fork Failed!");
+    if (pid == 0)
+    {
+        append_fd = open(av[ac -1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+        if (append_fd == -1)
+        {
+            close(oldfd);
+            error_exit("Error on outfile!");
+        }
+        safe_dup2(oldfd, STDIN_FILENO);
+        safe_dup2(append_fd, STDOUT_FILENO);
+        close(append_fd);
+        close(oldfd);
+        ft_exec_cmd(av[ac - 2], envp);
+    }
+    close(oldfd);
 	return (pid);
 }
