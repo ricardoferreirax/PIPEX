@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:56:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/04 09:13:38 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 00:59:17 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,4 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		substring[idx++] = s[start++];
 	substring[idx] = '\0';
 	return (substring);
-}
-
-void	ft_free_str(char **str)
-{
-	int	i;
-
-	if (!str)
-		return ;
-	i = 0;
-	while (str[i])
-	{
-		free(str[i]);
-		str[i] = NULL;
-		i++;
-	}
-	free(str);
 }

@@ -6,53 +6,37 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 14:41:05 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/06 16:57:12 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 02:30:15 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex.h"
 
-static pid_t	pipe_process(char **av, int pipefd[2], char **envp)
+int main(int ac, char **av, char **envp)
 {
-	pid_t	pid1;
-	pid_t	pid2;
+	int oldfd;
+	int last_pid;
+	int exit_code;
+	int i;
 
-	if (pipe(pipefd) == -1)
-		error_exit("Error creating pipe.");
-	pid1 = fork();
-	if (pid1 < 0)
+	if (ac < 5)
+		show_usage_exit();
+	if (ft_strncmp(av[1], "here_doc", 8) != 0)
 	{
-		perror("pipex: fork failed");
-		exit(1);
+		first_child(av, &oldfd, envp);
+		i = 3;
+		while (i < ac - 2)
+		{
+			last_pid = middle_child(av, &oldfd, envp, i);
+			i++;
+		}
+		last_pid = last_child(ac, av, oldfd, envp);
 	}
-	if (pid1 == 0)
-		handle_first_child(av, pipefd, envp);
-	pid2 = fork();
-	if (pid2 < 0)
+	else
 	{
-		perror("pipex: fork failed");
-		exit(1);
+		ft_heredoc(ac, av, &oldfd, envp);
+		last_pid = exec_last_cmd_and_append_output(av, oldfd, envp);
 	}
-	if (pid2 == 0)
-		handle_second_child(av, pipefd, envp);
-	close(pipefd[0]);
-	close(pipefd[1]);
-	return (pid2);
-}
-
-int	main(int ac, char **av, char **envp)
-{
-	int	pipefd[2];
-	int	last_pid;
-	int	exit_status;
-
-	if (ac != 5)
-	{
-		ft_putstr_fd("Input Error!\n", 2);
-		ft_putstr_fd("Use: ./pipex infile cmd1 cmd2 outfile\n", 2);
-		return (EXIT_FAILURE);
-	}
-	last_pid = pipe_process(av, pipefd, envp);
-	exit_status = wait_processes(last_pid);
-	return (exit_status);
+	exit_code = wait_processes(last_pid);
+	return (exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/07 00:28:11 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/08 02:34:24 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,20 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-typedef struct s_pid
-{
-	int	last_pid;
-	int	last_status;
-}		t_pid;
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
+void    ft_heredoc(int ac, char **av, int *oldfd, char **envp);
 void	ft_free_str(char **str);
+void	get_pipe_and_fork(int *pipefd, pid_t *pid);
+void 	safe_dup2(int oldfd, int newfd);
 char	*ft_cmd_path(char *cmd, char **envp);
 void	ft_exec_cmd(char *cmd, char **envp);
-void	handle_first_child(char **av, int pipefd[2], char **envp);
-void	handle_second_child(char **av, int pipefd[2], char **envp);
+void	first_child(char **av, int *prev_readfd, char **envp);
+pid_t	middle_child(char **av, int *prev_readfd, char **envp, int j);
+pid_t	last_child(int ac, char **av, int prev_readfd, char **envp);
+pid_t   exec_last_cmd_and_append_output(char **av, int oldfd, char **envp);
 int		wait_processes(int last_pid);
 char	*ft_strjoin(char const *s1, char const *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -47,8 +50,11 @@ char	**ft_split_quotes(char const *s, char c);
 void	ft_putendl_fd(const char *s, int fd);
 void	ft_putstr_fd(char *s, int fd);
 char	*ft_strchr(const char *s, int c);
+char	*get_next_line(int fd);
 void	error_exit(const char *message);
 void	cmd_not_found_msg(char *cmd);
 void	path_not_found_msg(char *cmd);
+void 	show_usage_exit(void);
+void    show_usage_heredoc(void);
 
 #endif
