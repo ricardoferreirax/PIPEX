@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:33:33 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 21:24:14 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:41:02 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,17 @@ static void read_till_limiter(char **av, int pipefd[2])
     exit(0);
 }
 
-static void    ft_heredoc(int ac, char **av, int *oldfd)
+static pid_t    ft_heredoc(char **av, int *hdoc_readfd)
 {
     int pipefd[2];
     pid_t pid;
 
-    (void)ac;
     get_pipe_and_fork(pipefd, &pid);
     if (pid == 0)
         read_till_limiter(av, pipefd);
     close(pipefd[1]);
-    *oldfd = pipefd[0];
-    wait(NULL);
+    *hdoc_readfd = pipefd[0];
+    return (pid);
 }
 
 static pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char **envp)
@@ -80,19 +79,26 @@ static pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char 
 
 pid_t ft_heredoc_pipeline(int ac, char **av, char **envp)
 {
-    int prev_readfd;
+    pid_t last_pid;
+    pid_t hdoc_pid;
+    int input_fd;
     int i;
-    pid_t last_pid = -1;
 
     if (ac < 6)
         show_usage_exit2();
-    ft_heredoc(ac, av, &prev_readfd);
+    input_fd = -1;
+    hdoc_pid = ft_heredoc(av, &input_fd);
     i = 3;
-    while (i < ac - 2)
+    last_pid = -1;
+    if (i < ac - 2)
     {
-        last_pid = middle_child(av, &prev_readfd, envp, i);
-        i++;
+        last_pid = middle_child(av, &input_fd, envp, i++);
+        waitpid(hdoc_pid, NULL, 0);
+        while (i < ac - 2)
+           last_pid = middle_child(av, &input_fd, envp, i++);
+        last_pid = exec_last_cmd_and_append_output(ac, av, input_fd, envp);
     }
-    last_pid = exec_last_cmd_and_append_output(ac, av, prev_readfd, envp);
+    else
+        last_pid = exec_last_cmd_and_append_output(ac, av, input_fd, envp);
     return (last_pid);
 }

@@ -6,19 +6,18 @@
 #    By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/28 14:56:48 by rmedeiro          #+#    #+#              #
-#    Updated: 2025/09/09 13:55:14 by rmedeiro         ###   ########.fr        #
+#    Updated: 2025/09/09 19:08:18 by rmedeiro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
-NAME_B = pipex_bonus
+B_NAME = pipex_bonus
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 RM = rm -rf
 
-HEADER = includes/pipex.h 
-HEADER_B = includes/pipex_bonus.h
+INCLUDE = includes
 
 SRCS = \
 	srcs/pipex/cmd_path.c \
@@ -32,7 +31,7 @@ SRCS = \
 	srcs/utils/libft_utils_2.c \
 	srcs/utils/pipex_utils.c \
 
-SRCS_B = \
+B_SRCS = \
 	srcs_bonus/pipex/cmd_path.c \
 	srcs_bonus/pipex/exec_cmd.c \
 	srcs_bonus/pipex/heredoc.c \
@@ -46,36 +45,39 @@ SRCS_B = \
 	srcs_bonus/utils/pipex_errors.c \
 	srcs_bonus/utils/pipex_utils.c \
 
+B_OBJS = $(B_SRCS:.c=.o)
+OBJS = $(SRCS:.c=.o)
+
 RED = \033[1;30;41m
 GREEN = \033[1;30;42m
 OFF := \033[0m
 
-OBJS = $(SRCS:.c=.o)
-OBJS_B = $(SRCS_B:.c=.o)
-
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HEADER)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
-	@echo "$(GREEN) $@ Created $(OFF)"
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
+	@echo "$(GREEN) ./pipex created! $(OFF)"
 
-bonus: $(NAME_B)
+bonus: $(B_NAME)
 
-$(NAME_B): $(OBJS_B)
-	$(CC) $(CFLAGS) $(OBJS_B) -o $@
-	@echo "$(GREEN) $@ Created $(OFF)"
+$(B_NAME): $(B_OBJS)
+	$(CC) $(CFLAGS) $(B_OBJS) -o $(B_NAME)
+	@echo "$(GREEN) ./pipex_bonus created! $(OFF)"
 
-%.o: %.c
-	$(CC) $(CFLAGS) -I includes -c $< -o $@
+%.o: %.c $(INCLUDE)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJS) $(OBJS_B)
-	@echo "$(RED) Obj Files Cleaned! $(OFF)"
+	$(RM) $(OBJS) $(B_OBJS)
+	@echo "$(RED) Object Files Cleaned! $(OFF)"
 
 fclean: clean
-	$(RM) $(NAME) $(NAME_B)
-	@echo "$(RED) Deleted!  $(OFF)"
+	$(RM) $(NAME)
+	$(RM) $(B_NAME)
+	@echo "$(GREEN) All Cleaned! $(OFF)" 
 
-re: fclean all
+re: fclean $(NAME)
 
-.PHONY: all clean fclean re bonus
+reb: fclean $(B_NAME)
+
+.PHONY: all clean fclean re reb bonus
