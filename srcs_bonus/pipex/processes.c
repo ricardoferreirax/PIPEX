@@ -6,13 +6,13 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:19:06 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 19:47:43 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:28:45 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex_bonus.h"
 
-void	first_child(char **av, int *prev_readfd, char **envp)
+void	first_child(char **av, int *prev_read_fd, char **envp)
 {
 	int	infile_fd;
 	int pipefd[2];
@@ -35,16 +35,16 @@ void	first_child(char **av, int *prev_readfd, char **envp)
 	    ft_exec_cmd(av[2], envp);
 	}
 	close(pipefd[1]);
-	*prev_readfd = pipefd[0];
+	*prev_read_fd = pipefd[0];
 }
 
-pid_t	middle_child(char **av, int *prev_readfd, char **envp, int j)
+pid_t	middle_child(char **av, int *prev_read_fd, char **envp, int i)
 {
 	int in_fd;
 	int pipefd[2];
 	pid_t pid;
 
-	in_fd = *prev_readfd;
+	in_fd = *prev_read_fd;
 	get_pipe_and_fork(pipefd, &pid);
 	if (pid == 0)
 	{
@@ -53,15 +53,15 @@ pid_t	middle_child(char **av, int *prev_readfd, char **envp, int j)
 		safe_dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
 		close(in_fd);
-		ft_exec_cmd(av[j], envp);
+		ft_exec_cmd(av[i], envp);
 	}
 	close(in_fd);
 	close(pipefd[1]);
-	*prev_readfd = pipefd[0];
+	*prev_read_fd = pipefd[0];
 	return (pid);
 }
 
-pid_t	last_child(int ac, char **av, int prev_readfd, char **envp)
+pid_t	last_child(int ac, char **av, int prev_read_fd, char **envp)
 {
 	int	outfile_fd;
 	pid_t pid;
@@ -74,16 +74,15 @@ pid_t	last_child(int ac, char **av, int prev_readfd, char **envp)
 		outfile_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (outfile_fd == -1)
 		{
-			close(prev_readfd);
+			close(prev_read_fd);
 			error_exit("Error on output file");
 		}
-		safe_dup2(prev_readfd, STDIN_FILENO);
+		safe_dup2(prev_read_fd, STDIN_FILENO);
 		safe_dup2(outfile_fd, STDOUT_FILENO);
-		close(prev_readfd);
+		close(prev_read_fd);
 	    close(outfile_fd);
 	    ft_exec_cmd(av[ac - 2], envp);
 	}
-	close(prev_readfd);
+	close(prev_read_fd);
 	return (pid);
 }
-

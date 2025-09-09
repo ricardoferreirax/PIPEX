@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:33:33 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/09 15:41:02 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:23:12 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void read_till_limiter(char **av, int pipefd[2])
     exit(0);
 }
 
-static pid_t    ft_heredoc(char **av, int *hdoc_readfd)
+static pid_t    ft_heredoc(char **av, int *hdoc_read_fd)
 {
     int pipefd[2];
     pid_t pid;
@@ -47,11 +47,11 @@ static pid_t    ft_heredoc(char **av, int *hdoc_readfd)
     if (pid == 0)
         read_till_limiter(av, pipefd);
     close(pipefd[1]);
-    *hdoc_readfd = pipefd[0];
+    *hdoc_read_fd = pipefd[0];
     return (pid);
 }
 
-static pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char **envp)
+static pid_t exec_last_and_append(int ac, char **av, int input_fd, char **envp)
 {
     int append_fd;
     pid_t pid;
@@ -64,16 +64,16 @@ static pid_t exec_last_cmd_and_append_output(int ac, char **av, int oldfd, char 
         append_fd = open(av[ac -1], O_WRONLY | O_CREAT | O_APPEND, 0644);
         if (append_fd == -1)
         {
-            close(oldfd);
+            close(input_fd);
             error_exit("Error on outfile!");
         }
-        safe_dup2(oldfd, STDIN_FILENO);
+        safe_dup2(input_fd, STDIN_FILENO);
         safe_dup2(append_fd, STDOUT_FILENO);
         close(append_fd);
-        close(oldfd);
+        close(input_fd);
         ft_exec_cmd(av[ac - 2], envp);
     }
-    close(oldfd);
+    close(input_fd);
 	return (pid);
 }
 
@@ -96,9 +96,9 @@ pid_t ft_heredoc_pipeline(int ac, char **av, char **envp)
         waitpid(hdoc_pid, NULL, 0);
         while (i < ac - 2)
            last_pid = middle_child(av, &input_fd, envp, i++);
-        last_pid = exec_last_cmd_and_append_output(ac, av, input_fd, envp);
+        last_pid = exec_last_and_append(ac, av, input_fd, envp);
     }
     else
-        last_pid = exec_last_cmd_and_append_output(ac, av, input_fd, envp);
+        last_pid = exec_last_and_append(ac, av, input_fd, envp);
     return (last_pid);
 }

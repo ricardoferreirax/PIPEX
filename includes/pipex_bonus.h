@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 16:13:59 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 19:56:13 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:22:44 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@
 #  define BUFFER_SIZE 42
 # endif
 
-pid_t	middle_child(char **av, int *prev_readfd, char **envp, int j);
-pid_t	last_child(int ac, char **av, int prev_readfd, char **envp);
+pid_t	middle_child(char **av, int *prev_read_fd, char **envp, int i);
+pid_t	last_child(int ac, char **av, int prev_read_fd, char **envp);
 pid_t   ft_heredoc_pipeline(int ac, char **av, char **envp);
-void	first_child(char **av, int *prev_readfd, char **envp);
+void	first_child(char **av, int *prev_read_fd, char **envp);
 void	get_pipe_and_fork(int pipefd[2], pid_t *pid);
 void 	safe_dup2(int oldfd, int newfd);
 void	ft_free_str(char **str);
