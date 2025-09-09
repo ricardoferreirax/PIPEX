@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 17:33:23 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 20:40:50 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:41:01 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,17 @@ void	path_not_found_msg(char *cmd)
 
 void show_usage_exit2(void)
 {
-	ft_putstr_fd("================== PIPEX BONUS ====================\n", 2);
+	ft_putstr_fd("================== PIPEX BONUS ======================\n", 2);
 	ft_putstr_fd("INPUT ERROR !\n\n", 2);
-	ft_putstr_fd("Replicate the Shell pipe (Mandatory):\n", 2);
+	ft_putstr_fd("Replicate the Shell pipe:\n\n", 2);
 	ft_putstr_fd("< infile cmd1 | cmd2 > outfile\n\n", 2);
 	ft_putstr_fd("< infile cmd1 | cmd2 | ... | cmdN > outfile\n\n", 2);
-	ft_putstr_fd("Bonus: Insert Two or More Commands:\n", 2);
-	ft_putstr_fd("./pipex_bonus infile cmd1 cmd2 ... cmdN outfile\n\n", 2);
-	ft_putstr_fd("Replicate the Shell here_doc:\n", 2);
+	ft_putstr_fd("Replicate the Shell heredoc:\n\n", 2);
 	ft_putstr_fd("cmd1 << LIMITER | cmd2 | ... | cmdN >> outfile\n\n", 2);
-	ft_putstr_fd("Format - Insert Two or More Commands:\n", 2);
-	ft_putstr_fd("./pipex_bonus here_doc LIMITER cmd1 cmd2 ... cmdN outfile\n", 2);
-	ft_putstr_fd("====================================================\n", 2);
+	ft_putstr_fd("Bonus: Insert Two or More Commands:\n", 2);
+	ft_putstr_fd("./pipex_bonus infile cmd1 cmd2 ... cmdN outf\n\n", 2);
+	ft_putstr_fd("Heredoc: Insert Two or More Commands:\n", 2);
+	ft_putstr_fd("./pipex_bonus here_doc LIMITER cmd1 cmd2 ... cmdN outf\n", 2);
+	ft_putstr_fd("======================================================\n", 2);
 	exit(EXIT_FAILURE);
 }

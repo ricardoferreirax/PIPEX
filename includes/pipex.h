@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:55:56 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/08 19:56:25 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/09 19:32:46 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 # include <unistd.h>
 
 
-pid_t	last_child(int ac, char **av, int prev_readfd, char **envp);
-void	first_child(char **av, int *prev_readfd, char **envp);
+pid_t	last_child(int ac, char **av, int prev_read_fd, char **envp);
+void	first_child(char **av, int *prev_read_fd, char **envp);
 void	get_pipe_and_fork(int pipefd[2], pid_t *pid);
 void 	safe_dup2(int oldfd, int newfd);
 void	ft_free_str(char **str);
