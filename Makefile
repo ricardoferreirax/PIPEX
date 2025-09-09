@@ -6,7 +6,7 @@
 #    By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/28 14:56:48 by rmedeiro          #+#    #+#              #
-#    Updated: 2025/09/08 22:12:24 by rmedeiro         ###   ########.fr        #
+#    Updated: 2025/09/09 13:55:14 by rmedeiro         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,7 @@ OFF := \033[0m
 OBJS = $(SRCS:.c=.o)
 OBJS_B = $(SRCS_B:.c=.o)
 
-all: $(NAME) $(NAME_B)
+all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADER)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
