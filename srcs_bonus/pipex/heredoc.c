@@ -6,33 +6,45 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 00:33:33 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/09 19:23:12 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/10 17:50:54 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/pipex_bonus.h"
 
+static int	remove_newline(char *line, char *delimiter)
+{
+	size_t	len;
+
+	if (!line || !delimiter)
+		return (0);
+	len = ft_strlen(line);
+	if (len > 0 && line[len - 1] == '\n')
+		line[len - 1] = '\0';
+	return (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0);
+}
+
 static void read_till_limiter(char **av, int pipefd[2])
 {
     char *line;
+    char *limiter;
 
+    limiter = av[2];
     close(pipefd[0]);
-    write (STDOUT_FILENO, "heredoc> ", 9);
     while (1)
     {
+        write(STDOUT_FILENO, "> ", 2);
         line = get_next_line(STDIN_FILENO);
         if (!line)
-            break ;
-        if (strncmp(line, av[2], ft_strlen(av[2])) == 0 
-            && line[ft_strlen(av[2])] == '\n' 
-            && line[ft_strlen(av[2]) + 1] == '\0')
+            return (warn_heredoc_eof(limiter), close(pipefd[1]), exit(0));
+        if (remove_newline(line, limiter))
         {
             free(line);
             break ;
         }
         write(pipefd[1], line, ft_strlen(line));
+        write(pipefd[1], "\n", 1);
         free(line);
-        write(STDOUT_FILENO, "heredoc> ", 9);
     }
     close(pipefd[1]);
     exit(0);
@@ -84,7 +96,7 @@ pid_t ft_heredoc_pipeline(int ac, char **av, char **envp)
     int input_fd;
     int i;
 
-    if (ac < 6)
+    if (ac < 5)
         show_usage_exit2();
     input_fd = -1;
     hdoc_pid = ft_heredoc(av, &input_fd);

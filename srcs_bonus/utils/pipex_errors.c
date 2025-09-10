@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/27 17:33:23 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/09 19:41:01 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/10 17:48:12 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@ void	path_not_found_msg(char *cmd)
 	ft_putstr_fd("Pipex: ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putendl_fd(": No such file or directory", 2);
+}
+
+void warn_heredoc_eof(char *lim)
+{
+    write(STDERR_FILENO,
+          "warning: here-document delimited by end-of-file (wanted '", 58);
+    write(STDERR_FILENO, lim, ft_strlen(lim));
+    write(STDERR_FILENO, "')\n", 3);
 }
 
 void show_usage_exit2(void)

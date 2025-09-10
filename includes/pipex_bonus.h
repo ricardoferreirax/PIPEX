@@ -6,7 +6,7 @@
 /*   By: rmedeiro <rmedeiro@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 16:13:59 by rmedeiro          #+#    #+#             */
-/*   Updated: 2025/09/09 19:22:44 by rmedeiro         ###   ########.fr       */
+/*   Updated: 2025/09/10 17:49:35 by rmedeiro         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	cmd_not_found_msg(char *cmd);
 void	path_not_found_msg(char *cmd);
 void 	show_usage_exit2(void);
 void	error_exit(const char *message);
+void    warn_heredoc_eof(char *lim);
 int		wait_processes(int last_pid);
 
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
